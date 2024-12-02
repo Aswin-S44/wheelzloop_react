@@ -18,7 +18,7 @@ function CarCard({ car }) {
         <p className="variant">{car.varient}</p>
         <p>Year: {car.model}</p>
         <p>Kilometers: {car.kilometer.toLocaleString()}</p>
-        <p className="price">Price: ₹{car.price.toLocaleString()}</p>
+        <p className="price">Price: ₹{car?.price?.toLocaleString()}</p>
         <p className="location">
           <PlaceIcon /> {car.place}
         </p>

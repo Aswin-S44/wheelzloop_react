@@ -10,6 +10,7 @@ const useAuth = () => {
   const [cookies, removeCookie] = useCookies([]);
   const [username, setUsername] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const verifyCookie = async () => {
@@ -21,9 +22,10 @@ const useAuth = () => {
         {},
         { withCredentials: true }
       );
-      const { status, user } = data;
+      const { status, user, me } = data;
       setUsername(user);
       setIsLoggedIn(true);
+      setCurrentUser(me);
       if (status) {
         toast(`Hello ${user}`, {
           position: "top-right",
@@ -41,7 +43,7 @@ const useAuth = () => {
     navigate("/");
   };
 
-  return { username, logout, isLoggedIn };
+  return { username, logout, isLoggedIn, currentUser };
 };
 
 export default useAuth;

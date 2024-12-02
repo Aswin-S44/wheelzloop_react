@@ -1,13 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCamera, FaEllipsisV } from "react-icons/fa";
 import "./ProfileScreen.css";
 import { carData } from "../../constants/data";
 import CarCard from "../../components/CarCard/CarCard";
 import NotFound from "../NotFound/NotFound";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import { formattedDateTime } from "../../utils/time";
+import axios from "axios";
+import { BACKEND_URL } from "../../constants/urls";
 
 function ProfileScreen() {
-  const [myCars, setMyCars] = useState(carData);
+  const navigate = useNavigate();
+  const [myCars, setMyCars] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { username, logout, isLoggedIn, currentUser } = useAuth();
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      setLoading(true);
+      let res = await axios.get(`${BACKEND_URL}/api/v1/user/cars/me`, {
+        withCredentials: true,
+      });
+      setLoading(false);
+      setMyCars(res?.data);
+    };
+    fetchCars();
+  }, []);
+
+  const handleAddCar = () => {
+    navigate("/add-car");
+  };
+
   return (
     <div className="profile-container">
       <section className="profile-left">
@@ -22,24 +47,31 @@ function ProfileScreen() {
               <FaCamera />
             </button>
           </div>
-          <h2 className="profile-name">John Doe</h2>
-          <p className="member-since">Member since March 21, 2021</p>
+          <h2 className="profile-name">{currentUser?.firstName}</h2>
+          {console.log("time-----------", currentUser?.createdAt)}
+          <p className="member-since">
+            Member since{" "}
+            {currentUser?.createdAt
+              ? formattedDateTime(currentUser?.createdAt)
+              : "_"}{" "}
+          </p>
           <button className="action-btn">Edit Profile</button>
           <button className="action-btn secondary-btn">Share Profile</button>
         </div>
       </section>
       <section className="profile-right">
-        <h2 className="section-title">My Cars</h2>
-        <div className="car-list mt-3">
-          {myCars.length === 0 && !loading ? (
-            <div
-              className="w-100"
-              style={{ display: "flex", justifyContent: "center" }}
-            >
-              <NotFound />
-            </div>
+        <div className="space-between">
+          <h2 className="section-title">My Cars</h2>
+          <button className="primary" onClick={handleAddCar}>
+            <AddCircleOutlineIcon />
+            Add Car
+          </button>
+          {loading ? (
+            <>Loading....</>
+          ) : myCars.length == 0 ? (
+            <>No cars</>
           ) : (
-            myCars.map((car) => <CarCard key={car._id} car={car} />)
+            myCars.map((car, index) => <CarCard key={index} car={car} />)
           )}
         </div>
       </section>

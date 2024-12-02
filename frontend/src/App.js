@@ -8,6 +8,7 @@ import AllCars from "./screens/AllCars/AllCars";
 import ReviewScreen from "./screens/ReviewScreen/ReviewScreen";
 import LoginScreen from "./screens/LoginScreen/LoginScreen";
 import ProfileScreen from "./screens/ProfileScreen/ProfileScreen";
+import AddCar from "./screens/AddCar/AddCar";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/reviews" element={<ReviewScreen />} />
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/add-car" element={<AddCar />} />
           </Routes>
         </main>
         {/* <Footer /> */}
