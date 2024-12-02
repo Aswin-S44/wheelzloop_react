@@ -4,7 +4,8 @@ const { createSecretToken } = require("../../utils/helpers");
 
 module.exports.Login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body.values;
+
     if (!email || !password) {
       return res.json({ message: "All fields are required" });
     }
