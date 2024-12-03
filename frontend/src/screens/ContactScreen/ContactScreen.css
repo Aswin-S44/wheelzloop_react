@@ -1,0 +1,79 @@
+.contact-screen {
+    background: linear-gradient(135deg, #21cb98, #5e4b8b); /* Gradient background */
+    padding: 50px 20px;
+    text-align: center;
+    border-radius: 15px;
+    color: white;
+  }
+  
+  .contact-header h2 {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+  
+  .contact-header p {
+    font-size: 18px;
+    margin-bottom: 40px;
+    opacity: 0.8;
+  }
+  
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input-field, .textarea-field {
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 30px;
+    background-color: #f1f1f1;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    color: #333;
+  }
+  
+  .input-field:focus, .textarea-field:focus {
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(33, 203, 152, 0.5); /* Light glow effect */
+  }
+  
+  .textarea-field {
+    height: 150px;
+    resize: none;
+  }
+  
+  .submit-btn {
+    background-color: #fff;
+    color: #21cb98;
+    padding: 12px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .submit-btn:hover {
+    background-color: #21cb98;
+    color: white;
+    transform: translateY(-2px); /* Subtle hover effect */
+  }
+  
+  .submit-btn:active {
+    transform: translateY(2px); /* Feedback for pressing the button */
+  }
+  

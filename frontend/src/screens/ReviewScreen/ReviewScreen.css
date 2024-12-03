@@ -128,4 +128,10 @@
     color: #666;
     margin: 10px 0;
   }
-  
+  @media (max-width: 768px) {
+
+  .review-page {
+    margin-top: 60px;
+  }
+
+  }

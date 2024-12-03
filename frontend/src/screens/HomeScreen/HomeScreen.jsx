@@ -6,6 +6,7 @@ import HowItWorks from "../../sections/HowItWorks/HowItWorks";
 import FeaturesSection from "../../sections/FeaturesSection/FeaturesSection";
 import Reviews from "../../sections/Reviews/Reviews";
 import PopularBrands from "../../sections/PopularBrands/PopularBrands";
+import NewsAndResources from "../../sections/NewsAndResources/NewsAndResources";
 
 function HomeScreen() {
   return (
@@ -25,6 +26,9 @@ function HomeScreen() {
         </section>
         <section>
           <Reviews />
+        </section>
+        <section>
+          <NewsAndResources />
         </section>
         <section>
           <PopularBrands />

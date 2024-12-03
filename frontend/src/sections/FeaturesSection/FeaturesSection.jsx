@@ -41,7 +41,18 @@ const FeaturesSection = () => {
       >
         Why Choose Us
       </Typography>
-      <Grid container spacing={4}>
+      <div className="mt-2 container-fluid">
+        <p className="medium-paragraph">
+          WheelzLoop connects car sellers and buyers seamlessly. Sellers can
+          create an account, list their cars with detailed descriptions and
+          photos, and make them visible to thousands of potential buyers. Buyers
+          can explore a wide range of verified listings and directly contact
+          sellers or dealers to negotiate and finalize deals. With WheelzLoop,
+          finding your next car or selling your current one is quick, secure,
+          and hassle-free.
+        </p>
+      </div>
+      <Grid container spacing={4} className="mt-4">
         {features.map((feature, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
             <Card

@@ -4,7 +4,6 @@ const User = require("../models/users/schema");
 
 module.exports.getMe = (req, res) => {
   const token = req.cookies.token;
-
   if (!token) {
     return res.json({ status: false });
   }

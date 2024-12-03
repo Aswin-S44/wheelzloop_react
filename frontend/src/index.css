@@ -4,7 +4,7 @@
   padding: 0;
 }
 section{
-  padding: 80px;
+  padding: 60px;
 }
 
 
@@ -92,4 +92,15 @@ input,select{
   color: white;
   font-size: 20px;
   font-weight: bold;
+}
+
+.medium-paragraph{
+  font-family: 'Inter';
+  line-height: 30px;
+}
+
+.space-around{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
 }

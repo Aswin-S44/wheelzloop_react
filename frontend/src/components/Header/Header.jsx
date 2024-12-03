@@ -6,11 +6,13 @@ import useAuth from "../../hooks/useAuth";
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { username, logout, isLoggedIn } = useAuth();
+  const { username, logout, isLoggedIn, currentUser } = useAuth();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+  console.log("Is logged IN  : ", isLoggedIn);
+  console.log("Usernmae : ", username, currentUser);
 
   const goToLogin = () => {
     window.location.href = "/login";
@@ -28,7 +30,7 @@ function Header() {
         <a href="/about-us">About Us</a>
         <a href="/used-cars">Explore Cars</a>
         <a href="/reviews">Reviews</a>
-        <a href="#contact-us">Contact Us</a>
+        <a href="/contact-us">Contact Us</a>
         {isLoggedIn ? (
           <>
             <div class="dropdown">
