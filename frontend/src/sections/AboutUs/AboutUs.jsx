@@ -3,8 +3,8 @@ import "./AboutUs.css";
 
 function AboutUs() {
   return (
-    <section>
-      <div className="container">
+    <section className="about-page">
+      <div className="container mt-sm-4">
         <div className="row">
           <div className="col-md-6 mt-5">
             <img

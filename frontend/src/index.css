@@ -44,7 +44,7 @@ scrollbar-thumb {
   justify-content: space-between;
 }
 button.primary {
-  background-color: #21cb98;
+  background-color: #DE3163;
   color: #fff;
   padding: 8px;
   border: none;
@@ -112,5 +112,5 @@ button.secondary{
 }
 
 button.secondary-btn{
-  border: 1px solid rgb(230, 227, 227);
+  border: 1px solid rgb(231, 197, 197);
 }

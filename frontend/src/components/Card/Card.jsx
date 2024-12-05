@@ -15,7 +15,8 @@ import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { formattedDateTime } from "../../utils/time";
-import './Card.css'
+import "./Card.css";
+import PlaceIcon from "@mui/icons-material/Place";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -49,7 +50,7 @@ export default function RecipeReviewCard({ carData }) {
   };
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 305,maxHeight:400 }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -71,7 +72,16 @@ export default function RecipeReviewCard({ carData }) {
         alt="Paella dish"
       />
       <CardContent>
-       <h4 className="car-name">{carData?.name ?? '_'}</h4>
+        <h4 className="car-name">{carData?.name ?? "_"}</h4>
+        <div className="car-details">
+          <p className="variant">{carData?.varient}</p>
+          <p>Year: {carData?.model}</p>
+          <p>Kilometers: {carData?.kilometer.toLocaleString()}</p>
+          <p className="price">Price: ₹{carData?.price?.toLocaleString()}</p>
+          <p className="location">
+            <PlaceIcon /> {carData?.place}
+          </p>
+        </div>
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">

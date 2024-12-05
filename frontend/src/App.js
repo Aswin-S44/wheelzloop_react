@@ -28,7 +28,7 @@ function App() {
             <Route path="/contact-us" element={<ContactScreen />} />
           </Routes>
         </main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </BrowserRouter>
   );

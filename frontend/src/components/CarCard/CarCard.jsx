@@ -10,15 +10,15 @@ function CarCard({ car }) {
       className="car-card-2"
       onClick={() => navigate(`/details/${car?._id}`)}
     >
-      <img src={car.image} alt={car.car_name} className="car-image-2" />
+      <img src={car.images[0]} alt={car.car_name} className="car-image-2" />
       <div className="car-details">
         <h5>
-          {car.car_name} - {car.model}
+          {car.name} - {car.varient}
         </h5>
         <p className="variant">{car.varient}</p>
-        <p>Year: {car.model}</p>
+        <p>Year: {car.year ?? "_"}</p>
         <p>Kilometers: {car.kilometer.toLocaleString()}</p>
-        <p className="price">Price: ₹{car?.price?.toLocaleString()}</p>
+        <p className="price">Price: ₹{car?.rate?.toLocaleString()}</p>
         <p className="location">
           <PlaceIcon /> {car.place}
         </p>
