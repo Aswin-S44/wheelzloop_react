@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./ProfileScreen.css";
 import RecipeReviewCard from "../../components/Card/Card";
 import useAuth from "../../hooks/useAuth";
@@ -15,6 +15,12 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import { FaEllipsisV } from "react-icons/fa";
+import { formattedDateTime } from "../../utils/time";
+import PhoneIcon from "@mui/icons-material/Phone";
+import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 function ProfileScreen() {
   const [myCars, setMyCars] = useState([]);
@@ -22,6 +28,8 @@ function ProfileScreen() {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedCar, setSelectedCar] = useState(null);
   const { currentUser } = useAuth();
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const dropdownRefs = useRef({});
 
   const [value, setValue] = React.useState("1");
 
@@ -43,6 +51,37 @@ function ProfileScreen() {
   }, []);
 
   const handleAddCar = () => navigate("/add-car");
+
+  const handleMenuClick = (carId) => {
+    setActiveDropdown(activeDropdown === carId ? null : carId);
+  };
+
+  const handleClickOutside = (e) => {
+    if (
+      activeDropdown !== null &&
+      (!dropdownRefs.current[activeDropdown] ||
+        !dropdownRefs.current[activeDropdown].contains(e.target))
+    ) {
+      setActiveDropdown(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [activeDropdown]);
+
+  const handleEdit = (carId) => {
+    console.log("Edit car ID:", carId);
+    setActiveDropdown(null);
+  };
+
+  const handleRemove = (carId) => {
+    console.log("Remove car ID:", carId);
+    setActiveDropdown(null);
+  };
 
   return (
     <div className="mt-4">
@@ -81,37 +120,125 @@ function ProfileScreen() {
                 </button>
               </div>
               <div className="row mt-4">
-                <Box sx={{ width: "100%", typography: "body1" }}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    typography: "body1",
+                  }}
+                >
                   <TabContext value={value}>
-                    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                    <Box
+                      sx={{
+                        borderBottom: 1,
+                        borderColor: "divider",
+                        backgroundColor: "#f4f6f6",
+                        borderRadius: 2,
+                      }}
+                    >
                       <TabList
                         onChange={handleChange}
                         aria-label="lab API tabs example"
                       >
-                        <Tab label="My Cars" value="1" />
-                        <Tab label="1 month Ago" value="2" />
-                        <Tab label="Saved" value="3" />
+                        <Tab
+                          icon={<DirectionsCarFilledIcon />}
+                          label="My Cars"
+                          value="1"
+                          sx={{
+                            color: "#111",
+                            "&.Mui-selected": {
+                              color: "#DE3163",
+                            },
+                          }}
+                        />
+                        <Tab
+                          icon={<CalendarMonthIcon />}
+                          label="1 month Ago"
+                          value="2"
+                          sx={{
+                            color: "#111",
+                            "&.Mui-selected": {
+                              color: "#DE3163",
+                            },
+                          }}
+                        />
+                        <Tab
+                          icon={<FavoriteIcon />}
+                          label="Saved"
+                          value="3"
+                          sx={{
+                            color: "#111",
+                            "&.Mui-selected": {
+                              color: "#DE3163",
+                            },
+                          }}
+                        />
                       </TabList>
                     </Box>
                     <TabPanel value="1">
-                      <div className="row">
-                        {loading ? (
-                          <div className="text-center">
-                            <img
-                              src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif"
-                              className="w-50"
-                            />
-                          </div>
-                        ) : myCars.length == 0 && !loading ? (
-                          <>Loading....</>
-                        ) : (
-                          myCars.map((car, index) => (
-                            <div className="col-md-4">
-                              {/* <RecipeReviewCard carData={car} key={index} /> */}
-                              <CarCard car={car} />
+                      <div className="cars-container">
+                        {myCars.map((car) => (
+                          <div className="car-card" key={car._id}>
+                            <div className="card-header">
+                              <FaEllipsisV
+                                className="dots-icon"
+                                onClick={() => handleMenuClick(car._id)}
+                              />
+                              {activeDropdown === car._id && (
+                                <div
+                                  className="dropdown-menu"
+                                  ref={(el) =>
+                                    (dropdownRefs.current[car._id] = el)
+                                  }
+                                  style={{
+                                    right:
+                                      document.body.clientWidth -
+                                        dropdownRefs.current[
+                                          car._id
+                                        ]?.getBoundingClientRect()?.right <
+                                      0
+                                        ? "auto"
+                                        : "0px",
+                                    left:
+                                      document.body.clientWidth -
+                                        dropdownRefs.current[
+                                          car._id
+                                        ]?.getBoundingClientRect()?.right <
+                                      0
+                                        ? "-100px"
+                                        : "auto",
+                                  }}
+                                >
+                                  <button onClick={() => handleEdit(car._id)}>
+                                    Edit
+                                  </button>
+                                  <button onClick={() => handleRemove(car._id)}>
+                                    Remove
+                                  </button>
+                                </div>
+                              )}
                             </div>
-                          ))
-                        )}
+                            <img
+                              src={car?.images[0]}
+                              alt={car.name}
+                              className="car-image"
+                            />
+                            <div className="car-info">
+                              <h2 className="car-name">{car.name}</h2>
+                              <p>
+                                Posted on :{" "}
+                                {car.createdAt
+                                  ? formattedDateTime(car.createdAt)
+                                  : "_"}
+                              </p>
+                              <p className="car-details">
+                                {car.year} | {car.varient} | {car.kilometer} km
+                              </p>
+                              <p className="car-price">
+                                ₹{car.rate.toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </TabPanel>
                     <TabPanel value="2">Item Two</TabPanel>

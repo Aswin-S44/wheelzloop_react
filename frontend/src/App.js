@@ -10,6 +10,7 @@ import LoginScreen from "./screens/LoginScreen/LoginScreen";
 import ProfileScreen from "./screens/ProfileScreen/ProfileScreen";
 import AddCar from "./screens/AddCar/AddCar";
 import ContactScreen from "./screens/ContactScreen/ContactScreen";
+import BlogsScreen from "./screens/BlogsScreen/BlogsScreen";
 
 function App() {
   return (
@@ -26,9 +27,10 @@ function App() {
             <Route path="/profile" element={<ProfileScreen />} />
             <Route path="/add-car" element={<AddCar />} />
             <Route path="/contact-us" element={<ContactScreen />} />
+            <Route path="/blogs" element={<BlogsScreen />} />
           </Routes>
         </main>
-        {/* <Footer /> */}
+        <Footer />
       </div>
     </BrowserRouter>
   );

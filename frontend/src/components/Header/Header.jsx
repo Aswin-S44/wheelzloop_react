@@ -32,6 +32,7 @@ function Header() {
         <a href="/about-us">About Us</a>
         <a href="/used-cars">Explore Cars</a>
         <a href="/reviews">Reviews</a>
+        <a href="/blogs">Blogs</a>
         <a href="/contact-us">Contact Us</a>
         {isLoggedIn && username ? (
           <div className="dropdown">
