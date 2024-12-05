@@ -8,6 +8,7 @@ section{
 }
 
 
+
 @media (max-width: 768px) {
   section{
     padding: 0;
@@ -103,4 +104,13 @@ input,select{
   display: flex;
   justify-content: space-around;
   flex-direction: row;
+}
+
+button.secondary{
+  background-color: #EB6600;
+  color: #fff;
+}
+
+button.secondary-btn{
+  border: 1px solid rgb(230, 227, 227);
 }

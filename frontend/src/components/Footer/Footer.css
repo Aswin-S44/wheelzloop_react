@@ -1,6 +1,6 @@
 .footer {
-    background-color: rgb(33, 203, 152);
-    color: white;
+    background-color: #e5e7e9;
+    color: #111;
     padding: 40px 20px;
     display: flex;
     flex-direction: column;
@@ -40,7 +40,7 @@
   }
   
   .footer-links a {
-    color: white;
+    color: #111;
     text-decoration: none;
   }
   
@@ -53,14 +53,14 @@
   }
   
   .social-icons a {
-    color: white;
+    color: #DE3163;
     margin-right: 10px;
     font-size: 20px;
     transition: color 0.3s;
   }
   
   .social-icons a:hover {
-    color: #f0e68c;
+    color: #DE3163;
   }
   
   .newsletter-form {
@@ -90,7 +90,7 @@
   .footer-bottom {
     text-align: center;
     padding: 20px 0;
-    background-color: #155d4e;
+    background-color: #fff;
   }
   
   @media (max-width: 768px) {

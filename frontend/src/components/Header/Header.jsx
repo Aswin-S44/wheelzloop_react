@@ -21,7 +21,7 @@ function Header() {
   return (
     <header className="header">
       <div className="logo">
-        <a href="/" style={{ textDecoration: "none", color: "#21cb98" }}>
+        <a href="/" style={{ textDecoration: "none", color: "#DE3163" }}>
           Wheelz<span style={{ color: "#111" }}>Loop</span>
         </a>
       </div>

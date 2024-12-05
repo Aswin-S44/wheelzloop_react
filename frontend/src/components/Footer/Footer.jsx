@@ -69,7 +69,7 @@ function Footer() {
             Email:{" "}
             <a
               href="mailto:info@wheelzloop.com"
-              style={{ textDecoration: "none", color: "#fff" }}
+              style={{ textDecoration: "none", color: "#111" }}
             >
               wheelzloop@gmail.com
             </a>

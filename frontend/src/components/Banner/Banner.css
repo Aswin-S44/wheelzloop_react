@@ -10,7 +10,7 @@
 }
 
 .banner-content h1 span {
-    color: #21cb98;
+    color: #DE3163;
 }
 
 .banner-content p {
@@ -21,7 +21,7 @@
 
 .banner-btn {
     padding: 10px 20px;
-    background-color: #21cb98;
+    background-color: #DE3163;
     color: white;
     font-size: 1rem;
     border: none;
@@ -31,7 +31,7 @@
 }
 
 .banner-btn:hover {
-    background-color: #189f76;
+    background-color: #DE3163;
 }
 
 @media (max-width: 768px) {

@@ -3,9 +3,9 @@ import "./AboutUs.css";
 
 function AboutUs() {
   return (
-    <section className="mt-5">
-      <div className="container mt-5">
-        <div className="row mt-5">
+    <section>
+      <div className="container">
+        <div className="row">
           <div className="col-md-6 mt-5">
             <img
               src="https://cdn.pixabay.com/photo/2024/09/08/08/52/car-9031576_1280.png"

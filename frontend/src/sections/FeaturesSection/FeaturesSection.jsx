@@ -11,22 +11,22 @@ const features = [
   {
     title: "Wide Selection of Cars",
     description: "Choose from a vast selection of new and used cars.",
-    icon: <DirectionsCar style={{ fontSize: 50, color: "#1a9d74" }} />,
+    icon: <DirectionsCar style={{ fontSize: 50, color: "#DE3163" }} />,
   },
   {
     title: "Affordable Pricing",
     description: "Get the best deals and prices that fit your budget.",
-    icon: <AttachMoney style={{ fontSize: 50, color: "#1a9d74" }} />,
+    icon: <AttachMoney style={{ fontSize: 50, color: "#DE3163" }} />,
   },
   {
     title: "Verified Sellers",
     description: "All sellers are verified to ensure a smooth experience.",
-    icon: <Verified style={{ fontSize: 50, color: "#1a9d74" }} />,
+    icon: <Verified style={{ fontSize: 50, color: "#DE3163" }} />,
   },
   {
     title: "Special Offers",
     description: "Enjoy exclusive deals and discounts on select vehicles.",
-    icon: <LocalOffer style={{ fontSize: 50, color: "#1a9d74" }} />,
+    icon: <LocalOffer style={{ fontSize: 50, color: "#DE3163" }} />,
   },
 ];
 
@@ -37,7 +37,7 @@ const FeaturesSection = () => {
         variant="h4"
         align="center"
         gutterBottom
-        style={{ color: "#1a9d74", fontWeight: "bold" }}
+        style={{ color: "#DE3163", fontWeight: "bold" }}
       >
         Why Choose Us
       </Typography>

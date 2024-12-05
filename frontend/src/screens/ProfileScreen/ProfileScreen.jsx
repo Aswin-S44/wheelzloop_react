@@ -84,7 +84,7 @@ function ProfileScreen() {
                       ? formattedDateTime(currentUser?.createdAt)
                       : "_"}
                   </p>
-                  <button className="action-btn primary">Edit Profile</button>
+                  <button className="action-btn secondary">Edit Profile</button>
                   <button className="action-btn secondary-btn">
                     Share Profile
                   </button>
