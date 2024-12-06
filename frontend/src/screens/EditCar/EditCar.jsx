@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import "./AddCar.css";
+import React, { useEffect, useState } from "react";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -15,7 +14,7 @@ const vehicleBodyTypes = [
   "Convertible",
 ];
 
-function AddCar() {
+function EditCar({ car }) {
   const [step, setStep] = useState(1);
   const [images, setAdditionalImages] = useState([]);
   const [name, setName] = useState("");
@@ -38,7 +37,6 @@ function AddCar() {
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
-    setAdditionalImages([]);
     setName("");
     setYear("");
     setVarient("");
@@ -58,7 +56,31 @@ function AddCar() {
     setUnderWarrenty(false);
     setLoading(false);
     setStep(1);
+    setAdditionalImages([]);
   };
+
+  useEffect(() => {
+    if (car) {
+      setName(car.name ?? "");
+      setYear(car.year ?? "");
+      setVarient(car.varient ?? "");
+      setKilometer(car.kilometer ?? 0);
+      setFuelType(car.fuelType ?? "");
+      setTransmission(car.transmission ?? "");
+      setRate(car.rate ?? 0);
+      setBrand(car.brand ?? "");
+      setLocation(car.place ?? "");
+      setBodyType(car.bodyType ?? "");
+      setTotalSeats(car.totalSeats ?? 0);
+      setOwnership(car.ownership ?? 0);
+      setIsPriceNegotiable(car.priceNegotiable ?? false);
+      setInsuaranceValidity(car.insuranceValidity ?? "");
+      setRto(car.rto ?? "");
+      setMileage(car.mileage ?? 0);
+      setUnderWarrenty(car.underWarrenty ?? false);
+      setAdditionalImages(car.images ?? []);
+    }
+  }, [car]);
 
   const handleAdditionalImagesChange = (e) => {
     const files = Array.from(e.target.files);
@@ -170,8 +192,8 @@ function AddCar() {
           <div className="message">Please Wait...</div>
         </div>
       )}
-      <section className="mt-5">
-        <div className="container mt-4">
+      <div className="mt-3">
+        <div className="container">
           <div className="row">
             <div className="col-md-4">
               <div className="multi-steps">
@@ -199,7 +221,7 @@ function AddCar() {
               <a href="/profile">
                 <ArrowBackIosIcon /> Back to Profile
               </a>
-              <h2 className="font-medium">Add new Car</h2>
+              <h2 className="font-medium mt-2">Edit Car</h2>
               <form onSubmit={handleAddCar}>
                 {step === 1 && (
                   <div className="add-car-form">
@@ -419,9 +441,9 @@ function AddCar() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
 
-export default AddCar;
+export default EditCar;

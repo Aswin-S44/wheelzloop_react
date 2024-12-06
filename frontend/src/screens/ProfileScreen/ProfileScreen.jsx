@@ -1,13 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./ProfileScreen.css";
-import RecipeReviewCard from "../../components/Card/Card";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants/urls";
 import EditIcon from "@mui/icons-material/Edit";
 import ShareIcon from "@mui/icons-material/Share";
-import CarCard from "../../components/CarCard/CarCard";
-import { useNavigate } from "react-router-dom";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Box from "@mui/material/Box";
@@ -17,27 +14,25 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { FaEllipsisV } from "react-icons/fa";
 import { formattedDateTime } from "../../utils/time";
-import PhoneIcon from "@mui/icons-material/Phone";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { useNavigate } from "react-router-dom";
+import EditCar from "../EditCar/EditCar";
 
 function ProfileScreen() {
   const [myCars, setMyCars] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [menuAnchor, setMenuAnchor] = useState(null);
-  const [selectedCar, setSelectedCar] = useState(null);
-  const { currentUser } = useAuth();
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [currentView, setCurrentView] = useState("list");
+  const [selectedCar, setSelectedCar] = useState(null);
   const dropdownRefs = useRef({});
-
-  const [value, setValue] = React.useState("1");
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
+  const [value, setValue] = useState("1");
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
+
+  const handleChange = (event, newValue) => setValue(newValue);
+
   useEffect(() => {
     const fetchCars = async () => {
       setLoading(true);
@@ -73,8 +68,9 @@ function ProfileScreen() {
     };
   }, [activeDropdown]);
 
-  const handleEdit = (carId) => {
-    console.log("Edit car ID:", carId);
+  const handleEdit = (car) => {
+    setSelectedCar(car);
+    setCurrentView("edit");
     setActiveDropdown(null);
   };
 
@@ -95,7 +91,9 @@ function ProfileScreen() {
                   alt="Profile"
                   className="profile-image"
                 />
-                <h3 className="profile-name">John Doe</h3>
+                <h3 className="profile-name">
+                  {currentUser?.name || "John Doe"}
+                </h3>
                 <p className="profile-date">Joined: January 1, 2023</p>
                 <div className="space-between">
                   <button className="btn primary">
@@ -112,140 +110,116 @@ function ProfileScreen() {
             <div className="col-md-9">
               <div className="space-between">
                 <h2 className="profile-breadcrumb">
-                  Home <ArrowForwardIosIcon /> Profile
+                  <a href="/">Home</a> <ArrowForwardIosIcon />{" "}
+                  <a href="/profile">Profile</a>
+                  {currentView === "edit" && (
+                    <>
+                      <ArrowForwardIosIcon /> Edit
+                    </>
+                  )}
                 </h2>
-                <button className="primary" onClick={handleAddCar}>
-                  <AddCircleOutlineIcon />
-                  Add New
-                </button>
+                {currentView === "list" && (
+                  <button className="primary" onClick={handleAddCar}>
+                    <AddCircleOutlineIcon />
+                    Add New
+                  </button>
+                )}
               </div>
-              <div className="row mt-4">
-                <Box
-                  sx={{
-                    width: "100%",
-                    typography: "body1",
-                  }}
-                >
-                  <TabContext value={value}>
-                    <Box
-                      sx={{
-                        borderBottom: 1,
-                        borderColor: "divider",
-                        backgroundColor: "#f4f6f6",
-                        borderRadius: 2,
-                      }}
-                    >
-                      <TabList
-                        onChange={handleChange}
-                        aria-label="lab API tabs example"
+              {currentView === "list" ? (
+                <div className="row mt-4">
+                  <Box
+                    sx={{
+                      width: "100%",
+                      typography: "body1",
+                    }}
+                  >
+                    <TabContext value={value}>
+                      <Box
+                        sx={{
+                          borderBottom: 1,
+                          borderColor: "divider",
+                          backgroundColor: "#f4f6f6",
+                          borderRadius: 2,
+                        }}
                       >
-                        <Tab
-                          icon={<DirectionsCarFilledIcon />}
-                          label="My Cars"
-                          value="1"
-                          sx={{
-                            color: "#111",
-                            "&.Mui-selected": {
-                              color: "#DE3163",
-                            },
-                          }}
-                        />
-                        <Tab
-                          icon={<CalendarMonthIcon />}
-                          label="1 month Ago"
-                          value="2"
-                          sx={{
-                            color: "#111",
-                            "&.Mui-selected": {
-                              color: "#DE3163",
-                            },
-                          }}
-                        />
-                        <Tab
-                          icon={<FavoriteIcon />}
-                          label="Saved"
-                          value="3"
-                          sx={{
-                            color: "#111",
-                            "&.Mui-selected": {
-                              color: "#DE3163",
-                            },
-                          }}
-                        />
-                      </TabList>
-                    </Box>
-                    <TabPanel value="1">
-                      <div className="cars-container">
-                        {myCars.map((car) => (
-                          <div className="car-card" key={car._id}>
-                            <div className="card-header">
-                              <FaEllipsisV
-                                className="dots-icon"
-                                onClick={() => handleMenuClick(car._id)}
+                        <TabList onChange={handleChange}>
+                          <Tab
+                            icon={<DirectionsCarFilledIcon />}
+                            label="My Cars"
+                            value="1"
+                          />
+                          <Tab
+                            icon={<CalendarMonthIcon />}
+                            label="1 month Ago"
+                            value="2"
+                          />
+                          <Tab
+                            icon={<FavoriteIcon />}
+                            label="Saved"
+                            value="3"
+                          />
+                        </TabList>
+                      </Box>
+                      <TabPanel value="1">
+                        <div className="cars-container">
+                          {myCars.map((car) => (
+                            <div className="car-card" key={car._id}>
+                              <div className="card-header">
+                                <FaEllipsisV
+                                  className="dots-icon"
+                                  onClick={() => handleMenuClick(car._id)}
+                                />
+                                {activeDropdown === car._id && (
+                                  <div
+                                    className="dropdown-menu"
+                                    ref={(el) =>
+                                      (dropdownRefs.current[car._id] = el)
+                                    }
+                                  >
+                                    <button onClick={() => handleEdit(car)}>
+                                      Edit
+                                    </button>
+                                    <button
+                                      onClick={() => handleRemove(car._id)}
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                              <img
+                                src={car?.images[0]}
+                                alt={car.name}
+                                className="car-image"
                               />
-                              {activeDropdown === car._id && (
-                                <div
-                                  className="dropdown-menu"
-                                  ref={(el) =>
-                                    (dropdownRefs.current[car._id] = el)
-                                  }
-                                  style={{
-                                    right:
-                                      document.body.clientWidth -
-                                        dropdownRefs.current[
-                                          car._id
-                                        ]?.getBoundingClientRect()?.right <
-                                      0
-                                        ? "auto"
-                                        : "0px",
-                                    left:
-                                      document.body.clientWidth -
-                                        dropdownRefs.current[
-                                          car._id
-                                        ]?.getBoundingClientRect()?.right <
-                                      0
-                                        ? "-100px"
-                                        : "auto",
-                                  }}
-                                >
-                                  <button onClick={() => handleEdit(car._id)}>
-                                    Edit
-                                  </button>
-                                  <button onClick={() => handleRemove(car._id)}>
-                                    Remove
-                                  </button>
-                                </div>
-                              )}
+                              <div className="car-info">
+                                <h2 className="car-name">{car.name}</h2>
+                                <p>
+                                  Posted on :{" "}
+                                  {car.createdAt
+                                    ? formattedDateTime(car.createdAt)
+                                    : "_"}
+                                </p>
+                                <p className="car-details">
+                                  {car.year} | {car.varient} | {car.kilometer}{" "}
+                                  km
+                                </p>
+                                <p className="car-price">
+                                  ₹{car.rate.toLocaleString()}
+                                </p>
+                              </div>
                             </div>
-                            <img
-                              src={car?.images[0]}
-                              alt={car.name}
-                              className="car-image"
-                            />
-                            <div className="car-info">
-                              <h2 className="car-name">{car.name}</h2>
-                              <p>
-                                Posted on :{" "}
-                                {car.createdAt
-                                  ? formattedDateTime(car.createdAt)
-                                  : "_"}
-                              </p>
-                              <p className="car-details">
-                                {car.year} | {car.varient} | {car.kilometer} km
-                              </p>
-                              <p className="car-price">
-                                ₹{car.rate.toLocaleString()}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </TabPanel>
-                    <TabPanel value="2">Item Two</TabPanel>
-                    <TabPanel value="3">Item Three</TabPanel>
-                  </TabContext>
-                </Box>
-              </div>
+                          ))}
+                        </div>
+                      </TabPanel>
+                      <TabPanel value="2">Item Two</TabPanel>
+                      <TabPanel value="3">Item Three</TabPanel>
+                    </TabContext>
+                  </Box>
+                </div>
+              ) : (
+                <EditCar car={selectedCar ?? {}} />
+              )}
             </div>
           </div>
         </div>

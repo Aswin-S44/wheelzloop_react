@@ -55,8 +55,8 @@
   }
   
   .submit-btn {
-    background-color: #fff;
-    color: #21cb98;
+    background-color: rgb(222, 49, 99);
+    color: #fff;
     padding: 12px 30px;
     font-size: 18px;
     font-weight: bold;
@@ -65,10 +65,11 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter';
   }
   
   .submit-btn:hover {
-    background-color: #21cb98;
+    background-color: rgb(180, 33, 75);
     color: white;
     transform: translateY(-2px); /* Subtle hover effect */
   }

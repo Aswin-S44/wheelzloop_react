@@ -8,7 +8,6 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: rgb(33, 203, 152);
   }
   
   .login-card {
@@ -25,7 +24,7 @@ body {
     font-weight: bold;
     margin-bottom: 20px;
     text-align: center;
-    color: rgb(33, 203, 152);
+    color: rgb(222, 49, 99);
   }
   
   .login-form .form-group {
@@ -68,7 +67,7 @@ body {
   
   .submit-btn {
     width: 100%;
-    background-color: rgb(33, 203, 152);
+    background-color: rgb(222, 49, 99);
     color: white;
     padding: 10px;
     border: none;
@@ -78,16 +77,16 @@ body {
   }
   
   .submit-btn:hover {
-    background-color: #28a584;
+    background-color: rgb(199, 23, 73);
   }
   
   .login-links {
     margin-top: 20px;
-    text-align: center;
+    text-align: left;
   }
   
   .link-text {
-    color: rgb(33, 203, 152);
+    color: #111;
     font-size: 14px;
     cursor: pointer;
   }
