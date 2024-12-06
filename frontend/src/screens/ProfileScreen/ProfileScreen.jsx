@@ -260,11 +260,13 @@ function ProfileScreen() {
             </div>
           </div>
         </div>
-        <TransitionsModal
-          car={selectedCar}
-          open={open}
-          handleClose={handleClose}
-        />
+        {selectedCar && (
+          <TransitionsModal
+            car={selectedCar}
+            open={open}
+            handleClose={handleClose}
+          />
+        )}
       </section>
     </div>
   );
