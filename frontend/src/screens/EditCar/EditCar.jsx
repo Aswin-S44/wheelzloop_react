@@ -102,28 +102,41 @@ function EditCar({ car }) {
     );
   };
 
-  const handleAddCar = async (e) => {
+  const handleEditCar = async (e) => {
     e.preventDefault();
-    let carData = {
-      images,
-      name,
-      year,
-      varient,
-      kilometer,
-      fuelType,
-      transmission,
-      rate,
-      brand,
-      location,
-      bodyType,
-      totalSeats,
-      ownership,
-      priceNegotiable,
-      insuranceValidity,
-      rto,
-      mileage,
-      underWarrenty,
-    };
+    let updatedCarData = {};
+
+    if (images.length !== car.images.length) updatedCarData.images = images;
+    if (name !== car.name) updatedCarData.name = name;
+    if (year !== car.year) updatedCarData.year = year;
+    if (varient !== car.varient) updatedCarData.varient = varient;
+    if (kilometer !== car.kilometer) updatedCarData.kilometer = kilometer;
+    if (fuelType !== car.fuelType) updatedCarData.fuelType = fuelType;
+    if (transmission !== car.transmission)
+      updatedCarData.transmission = transmission;
+    if (rate !== car.rate) updatedCarData.rate = rate;
+    if (brand !== car.brand) updatedCarData.brand = brand;
+    if (location !== car.location) updatedCarData.location = location;
+    if (bodyType !== car.bodyType) updatedCarData.bodyType = bodyType;
+    if (totalSeats !== car.totalSeats) updatedCarData.totalSeats = totalSeats;
+    if (ownership !== car.ownership) updatedCarData.ownership = ownership;
+    if (priceNegotiable !== car.priceNegotiable)
+      updatedCarData.priceNegotiable = priceNegotiable;
+    if (insuranceValidity !== car.insuranceValidity)
+      updatedCarData.insuranceValidity = insuranceValidity;
+    if (rto !== car.rto) updatedCarData.rto = rto;
+    if (mileage !== car.mileage) updatedCarData.mileage = mileage;
+    if (underWarrenty !== car.underWarrenty)
+      updatedCarData.underWarrenty = underWarrenty;
+
+    if (Object.keys(updatedCarData).length === 0) {
+      Swal.fire({
+        icon: "info",
+        title: "No changes detected",
+        text: "You haven't made any changes to the car details.",
+      });
+      return;
+    }
     if (images.length === 0) {
       Swal.fire({
         icon: "error",
@@ -146,11 +159,15 @@ function EditCar({ car }) {
       }).then(async (result) => {
         if (result.isConfirmed) {
           setLoading(true);
-          await axios.post(`${BACKEND_URL}/api/v1/user/add-car`, carData, {
-            withCredentials: true,
-          });
+          await axios.post(
+            `${BACKEND_URL}/api/v1/user/edit-car/${car._id}`,
+            updatedCarData,
+            {
+              withCredentials: true,
+            }
+          );
           setLoading(false);
-          Swal.fire("Saved!", "", "success");
+          Swal.fire("Car Updated!", "", "success");
           resetForm();
           window.location.href = "/profile";
         } else if (result.isDenied) {
@@ -222,7 +239,7 @@ function EditCar({ car }) {
                 <ArrowBackIosIcon /> Back to Profile
               </a>
               <h2 className="font-medium mt-2">Edit Car</h2>
-              <form onSubmit={handleAddCar}>
+              <form onSubmit={handleEditCar}>
                 {step === 1 && (
                   <div className="add-car-form">
                     <p>Car Name</p>

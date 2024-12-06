@@ -19,6 +19,8 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useNavigate } from "react-router-dom";
 import EditCar from "../EditCar/EditCar";
+import Swal from "sweetalert2";
+import TransitionsModal from "../../components/Modal/Modal";
 
 function ProfileScreen() {
   const [myCars, setMyCars] = useState([]);
@@ -30,6 +32,13 @@ function ProfileScreen() {
   const [value, setValue] = useState("1");
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = (car) => {
+    setSelectedCar(car);
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
 
   const handleChange = (event, newValue) => setValue(newValue);
 
@@ -74,8 +83,29 @@ function ProfileScreen() {
     setActiveDropdown(null);
   };
 
-  const handleRemove = (carId) => {
-    console.log("Remove car ID:", carId);
+  const handleRemove = async (carId) => {
+    Swal.fire({
+      title: "Are you sure to delte?",
+      text: "This will delete permanently!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await axios.post(`${BACKEND_URL}/api/v1/user/delete-car/${carId}`, {
+          withCredentials: true,
+        });
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+        });
+        window.location.reload();
+      }
+    });
+
     setActiveDropdown(null);
   };
 
@@ -176,6 +206,13 @@ function ProfileScreen() {
                                       (dropdownRefs.current[car._id] = el)
                                     }
                                   >
+                                    <button
+                                      onClick={() => {
+                                        handleOpen(car);
+                                      }}
+                                    >
+                                      View
+                                    </button>
                                     <button onClick={() => handleEdit(car)}>
                                       Edit
                                     </button>
@@ -223,6 +260,11 @@ function ProfileScreen() {
             </div>
           </div>
         </div>
+        <TransitionsModal
+          car={selectedCar}
+          open={open}
+          handleClose={handleClose}
+        />
       </section>
     </div>
   );
