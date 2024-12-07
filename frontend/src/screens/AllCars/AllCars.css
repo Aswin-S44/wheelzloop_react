@@ -32,7 +32,7 @@
   .car-info p {
     margin: 5px 0;
     font-size: 1rem;
-    color: #777;
+    /* color: #777; */
   }
   
   .brand, .year, .price {

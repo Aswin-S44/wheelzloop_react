@@ -46,14 +46,14 @@ function Header() {
             >
               {username}
             </button>
-            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {/* <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <a className="dropdown-item" href="/profile">
                 My Profile
               </a>
               <a className="dropdown-item" href="#" onClick={logout}>
                 Logout
               </a>
-            </div>
+            </div> */}
           </div>
         ) : (
           <button className="login-btn" onClick={goToLogin}>

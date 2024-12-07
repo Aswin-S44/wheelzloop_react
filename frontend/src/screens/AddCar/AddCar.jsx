@@ -199,7 +199,7 @@ function AddCar() {
               <a href="/profile">
                 <ArrowBackIosIcon /> Back to Profile
               </a>
-              <h2 className="font-medium">Add new Car</h2>
+              <h2 className="font-medium mt-2 font-primary">Add new Car</h2>
               <form onSubmit={handleAddCar}>
                 {step === 1 && (
                   <div className="add-car-form">
