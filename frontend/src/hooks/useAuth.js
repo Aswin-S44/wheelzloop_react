@@ -22,15 +22,12 @@ const useAuth = () => {
         {},
         { withCredentials: true }
       );
-      console.log('data------------', data)
+      console.log("data------------", data);
       const { status, user, me } = data;
       setUsername(user);
       setIsLoggedIn(true);
       setCurrentUser(me);
       if (status) {
-        toast(`Hello ${user}`, {
-          position: "top-right",
-        });
       } else {
         removeCookie("token");
         // navigate("/login");

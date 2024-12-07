@@ -29,6 +29,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 function ProfileScreen() {
   const [myCars, setMyCars] = useState([]);
+  const [savedCars, setSavedCars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [currentView, setCurrentView] = useState("list");
@@ -39,6 +40,10 @@ function ProfileScreen() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [fetching, setFetching] = useState(false);
+
   const handleOpen = (car) => {
     setSelectedCar(car);
     setOpen(true);
@@ -47,17 +52,50 @@ function ProfileScreen() {
 
   const handleChange = (event, newValue) => setValue(newValue);
 
-  useEffect(() => {
-    const fetchCars = async () => {
+  const fetchCars = async () => {
+    try {
+      setFetching(true);
       setLoading(true);
       const res = await axios.get(`${BACKEND_URL}/api/v1/user/cars/me`, {
+        params: { page, limit: 10 },
         withCredentials: true,
       });
       setLoading(false);
-      setMyCars(res?.data || []);
-    };
-    fetchCars();
-  }, []);
+      setMyCars((prev) => {
+        const newCars = res.data.cars.filter(
+          (car) => !prev.some((existingCar) => existingCar._id === car._id)
+        );
+        return [...prev, ...newCars];
+      });
+      setHasMore(res.data.cars.length > 0);
+      setFetching(false);
+    } catch (error) {
+      setFetching(false);
+    }
+  };
+
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 200 &&
+      hasMore &&
+      !fetching &&
+      myCars.length >= page * 10
+    ) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    if (myCars.length < page * 10) {
+      fetchCars();
+    }
+  }, [page]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [myCars, fetching, hasMore]);
 
   const handleAddCar = () => navigate("/add-car");
 
@@ -81,6 +119,23 @@ function ProfileScreen() {
   //     document.removeEventListener("mousedown", handleClickOutside);
   //   };
   // }, [activeDropdown]);
+
+  const [savedCarLoading, setSavedCarsLoading] = useState(false);
+  const getSavedCars = async () => {
+    try {
+      setSavedCarsLoading(true);
+      let saved_cars = await axios.post(
+        `${BACKEND_URL}/api/v1/user/cars/saved`
+      );
+      if (saved_cars && saved_cars.data && saved_cars.data.cars) {
+        setSavedCarsLoading(false);
+        setSavedCars(saved_cars.data.cars);
+      }
+    } catch (error) {
+      console.log("Error while fetching saved cars : ", error);
+      setSavedCarsLoading(false);
+    }
+  };
 
   const handleEdit = (car) => {
     setSelectedCar(car);
@@ -177,24 +232,10 @@ function ProfileScreen() {
                           />
 
                           <Tab
-                            icon={<CalendarMonthIcon />}
-                            label="1 month Ago"
-                            value="2"
-                            sx={{
-                              color: "grey",
-                              fontSize: "0.9rem",
-                              flexDirection: "row",
-                              textTransform: "none",
-                              "&.Mui-selected": {
-                                color: "rgb(222, 49, 99)",
-                              },
-                              minWidth: "auto",
-                            }}
-                          />
-                          <Tab
                             icon={<FavoriteIcon />}
                             label="Saved"
                             value="3"
+                            onClick={getSavedCars}
                             sx={{
                               color: "grey",
                               fontSize: "0.9rem",
@@ -298,7 +339,65 @@ function ProfileScreen() {
                         </div>
                       </TabPanel>
                       <TabPanel value="2">
-                        <EmptyState />
+                        {savedCarLoading ? (
+                          <Loader />
+                        ) : !savedCarLoading && savedCars.length == 0 ? (
+                          <EmptyState />
+                        ) : (
+                          savedCars.map((savedCar, index) => (
+                            <div className="car-card" key={index}>
+                              <div className="card-header">
+                                <FaEllipsisV
+                                  className="dots-icon"
+                                  onClick={() => handleMenuClick(savedCar._id)}
+                                />
+                                {activeDropdown === savedCar._id && (
+                                  <div
+                                    className="dropdown-menu"
+                                    ref={(el) =>
+                                      (dropdownRefs.current[savedCar._id] = el)
+                                    }
+                                  >
+                                    <button
+                                      onClick={() => handleRemove(savedCar._id)}
+                                    >
+                                      <DeleteIcon
+                                        sx={{
+                                          fontSize: "19px",
+                                          top: "-1px",
+                                          position: "relative",
+                                          color: "red",
+                                        }}
+                                      />{" "}
+                                      Remove
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                              <img
+                                src={savedCar?.images[0]}
+                                alt={savedCar.name}
+                                className="car-image"
+                              />
+                              <div className="car-info">
+                                <h2 className="car-name">{savedCar.name}</h2>
+                                <p>
+                                  Posted on :{" "}
+                                  {savedCar.createdAt
+                                    ? formattedDateTime(savedCar.createdAt)
+                                    : "_"}
+                                </p>
+                                <p className="car-details">
+                                  {savedCar.year} | {savedCar.varient} |{" "}
+                                  {savedCar.kilometer} km
+                                </p>
+                                <p className="price">
+                                  ₹{savedCar.rate.toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                          ))
+                        )}
                       </TabPanel>
                       <TabPanel value="3">
                         <EmptyState />

@@ -27,7 +27,7 @@ function LoginScreen() {
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
   });
- 
+
   const handleSubmit = async (values) => {
     try {
       const { data } = await axios.post(
@@ -68,12 +68,7 @@ function LoginScreen() {
           <Form className="login-form">
             <div className="form-group">
               <label htmlFor="email">Email or Phone Number</label>
-              <Field
-                type="text"
-                name="email"
-                id="email"
-                className="form-input"
-              />
+              <Field type="text" name="email" id="email" />
               <ErrorMessage name="email" component="div" className="error" />
             </div>
             <div className="form-group">
@@ -83,7 +78,6 @@ function LoginScreen() {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   id="password"
-                  className="form-input"
                 />
                 <button
                   type="button"

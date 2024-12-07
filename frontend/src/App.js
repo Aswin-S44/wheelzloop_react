@@ -11,6 +11,9 @@ import ProfileScreen from "./screens/ProfileScreen/ProfileScreen";
 import AddCar from "./screens/AddCar/AddCar";
 import ContactScreen from "./screens/ContactScreen/ContactScreen";
 import BlogsScreen from "./screens/BlogsScreen/BlogsScreen";
+import EditProfile from "./screens/EditProfile/EditProfile";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -28,8 +31,10 @@ function App() {
             <Route path="/add-car" element={<AddCar />} />
             <Route path="/contact-us" element={<ContactScreen />} />
             <Route path="/blogs" element={<BlogsScreen />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
           </Routes>
         </main>
+        <ToastContainer />
         <Footer />
       </div>
     </BrowserRouter>

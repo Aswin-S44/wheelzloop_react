@@ -24,7 +24,7 @@ function Header() {
     <header className="header">
       <div className="logo">
         <a href="/" style={{ textDecoration: "none", color: "#DE3163" }}>
-          Wheelz<span style={{ color: "#111" }}>Loop</span>
+          Wheelzloop
         </a>
       </div>
       <nav className={`nav-links ${menuOpen ? "open" : ""}`}>
