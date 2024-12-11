@@ -14,6 +14,7 @@ import BlogsScreen from "./screens/BlogsScreen/BlogsScreen";
 import EditProfile from "./screens/EditProfile/EditProfile";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DetailsScreen from "./screens/DetailsScreen/DetailsScreen";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/contact-us" element={<ContactScreen />} />
             <Route path="/blogs" element={<BlogsScreen />} />
             <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/details/:id" element={<DetailsScreen />} />
           </Routes>
         </main>
         <ToastContainer />

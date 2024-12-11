@@ -249,6 +249,7 @@ function EditCar({ car }) {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
+                      className="cusstom-input"
                     />
                     <p>Model (Year)</p>
                     <input
@@ -257,6 +258,7 @@ function EditCar({ car }) {
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
                       required
+                      className="cusstom-input"
                     />
                     <p>Variant</p>
                     <input
@@ -264,6 +266,7 @@ function EditCar({ car }) {
                       placeholder="Vxi, Vxi+ etc"
                       value={varient}
                       onChange={(e) => setVarient(e.target.value)}
+                      className="cusstom-input"
                     />
 
                     <p>Transmission Type</p>
@@ -287,6 +290,7 @@ function EditCar({ car }) {
                       placeholder="2"
                       name="ownership"
                       onChange={(e) => setOwnership(e.target.value)}
+                      className="cusstom-input"
                     />
 
                     <div className="float-right">
@@ -309,6 +313,7 @@ function EditCar({ car }) {
                       value={brand}
                       onChange={(e) => setBrand(e.target.value)}
                       required
+                      className="cusstom-input"
                     />
                     <p>Kilometer Run</p>
                     <input
@@ -316,6 +321,7 @@ function EditCar({ car }) {
                       placeholder="10000"
                       value={kilometer}
                       onChange={(e) => setKilometer(e.target.value)}
+                      className="cusstom-input"
                     />
                     <p>Fuel Type</p>
                     <select
@@ -346,6 +352,7 @@ function EditCar({ car }) {
                       name="insuranceValidity"
                       onChange={(e) => setInsuaranceValidity(e.target.value)}
                       required
+                      className="cusstom-input"
                     />
 
                     <p>Mileage</p>
@@ -354,6 +361,7 @@ function EditCar({ car }) {
                       placeholder="Ex: 20"
                       name="mileage"
                       onChange={(e) => setMileage(e.target.value)}
+                      className="cusstom-input"
                     />
 
                     <div className="float-right">
@@ -383,6 +391,7 @@ function EditCar({ car }) {
                       name="location"
                       onChange={(e) => setLocation(e.target.value)}
                       required
+                      className="cusstom-input"
                     />
                     <p>RTO</p>
                     <input
@@ -390,6 +399,7 @@ function EditCar({ car }) {
                       placeholder="Ex: Trivandrum"
                       name="rto"
                       onChange={(e) => setRto(e.target.value)}
+                      className="cusstom-input"
                     />
 
                     <p>Rate</p>
@@ -398,6 +408,7 @@ function EditCar({ car }) {
                       placeholder="250000"
                       value={rate}
                       onChange={(e) => setRate(e.target.value)}
+                      className="cusstom-input"
                     />
                     <p>Under Warrenty</p>
                     <select
@@ -413,6 +424,7 @@ function EditCar({ car }) {
                       placeholder="5"
                       value={totalSeats}
                       onChange={(e) => setTotalSeats(e.target.value)}
+                      className="cusstom-input"
                     />
                     <p>Upload Images</p>
                     <input
@@ -420,6 +432,7 @@ function EditCar({ car }) {
                       accept="image/*"
                       onChange={handleAdditionalImagesChange}
                       multiple
+                      className="cusstom-input"
                     />
                     <div className="image-preview">
                       {images.map((image, index) => (

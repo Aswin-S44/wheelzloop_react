@@ -1,0 +1,196 @@
+.details-screen {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    /* margin-top: 80px; */
+    justify-content: center;
+    align-items: center;
+   /* margin-top: 90px; */
+  }
+  
+  .image-section {
+    flex: 1;
+    margin-right: 20px;
+  }
+  h2.car-name{
+    font-size: 1.7rem;
+  }
+  
+  
+  
+  .main-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .additional-images {
+    display: flex;
+    margin-top: 10px;
+  }
+  
+  .additional-image {
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+    margin-right: 10px;
+    border: 1px solid #28a745;
+  }
+  
+  .details-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .specifications {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  
+  .spec-item {
+    width: 48%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .spec-item svg {
+    margin-right: 8px;
+  }
+  
+  .inquiry-button {
+    background-color: #21cb98;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  /* .inquiry-button:hover {
+    background-color: #218838;
+  } */
+  
+  .modal {
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .error {
+    color: red;
+    font-size: 12px;
+  }
+  
+  .submit-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .submit-button:hover {
+    background-color: #0069d9;
+  }
+  
+  .close-modal {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  .icon{
+    font-size: 16px;
+  }
+  
+  .spec-details-box{
+    border: 1px solid #28a745;
+    width: 90%;
+  }
+  
+  .spec-text{
+    color: rgb(117, 112, 112);
+    font-size: 18px;
+    font-weight: 600;
+    font-family: sans-serif;
+    white-space: no-wrap;
+  }
+  
+  .spec-title{
+    color: rgb(26, 157, 116);
+  }
+  
+  @media (max-width: 768px) {
+    .details-screen {
+      flex-direction: column;
+      padding: 10px;
+    }
+  
+    .image-section {
+      margin-right: 0;
+      margin-bottom: 15px;
+    }
+  
+    .additional-images {
+      flex-wrap: wrap;
+    }
+  
+    .additional-image {
+      width: calc(50% - 5px);
+      margin-right: 5px;
+    }
+  
+    .details-section {
+      flex: none;
+    }
+  
+    h2 {
+      font-size: 20px;
+    }
+  
+    .spec-item {
+      width: 100%;
+    }
+  
+    .spec-item svg {
+      width: 20px;
+      height: 20px;
+    }
+  
+    .inquiry-button {
+      width: 100%;
+    }
+  
+    .submit-button {
+      width: 100%;
+    }
+  }
+  

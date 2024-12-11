@@ -10,7 +10,9 @@ function CarCard({ car }) {
       className="car-card-2"
       onClick={() => navigate(`/details/${car?._id}`)}
     >
-      <img src={car.images[0]} alt={car.car_name} className="car-image-2" />
+      {car && car.images && car.images.length > 0 && (
+        <img src={car.images[0]} alt={car.car_name} className="car-image-2" />
+      )}
       <div className="car-details">
         <h5>
           {car.name} - {car.varient}

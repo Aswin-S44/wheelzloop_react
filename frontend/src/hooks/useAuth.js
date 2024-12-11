@@ -22,7 +22,7 @@ const useAuth = () => {
         {},
         { withCredentials: true }
       );
-      console.log("data------------", data);
+
       const { status, user, me } = data;
       setUsername(user);
       setIsLoggedIn(true);
