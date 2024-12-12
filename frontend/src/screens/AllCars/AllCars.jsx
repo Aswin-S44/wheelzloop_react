@@ -52,20 +52,22 @@ function AllCars() {
         <div className="row mt-4">
           <div className="col-md-3">
             <div className="container-fluid">
-              {isMobile ? (
-                <MobileFilterComponent
-                  brands={[]}
-                  years={[]}
-                  places={[]}
-                  onFilterChange={handleFilterChange}
-                />
-              ) : (
-                <Filter onFilterChange={handleFilterChange} />
-              )}
+              <div className="filter-box">
+                {isMobile ? (
+                  <MobileFilterComponent
+                    brands={[]}
+                    years={[]}
+                    places={[]}
+                    onFilterChange={handleFilterChange}
+                  />
+                ) : (
+                  <Filter onFilterChange={handleFilterChange} />
+                )}
+              </div>
             </div>
           </div>
           <div className="col-md-8">
-            <Carousel />
+            {/* <Carousel /> */}
             <div className="car-list mt-3">
               {cars.length === 0 && !loading ? (
                 <div

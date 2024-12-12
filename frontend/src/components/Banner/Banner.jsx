@@ -2,6 +2,9 @@ import React from "react";
 import "./Banner.css";
 
 function Banner() {
+  const navigateToExploreCars = () => {
+    window.location.href = "/used-cars";
+  };
   return (
     <section>
       <div className="banner-content">
@@ -16,7 +19,9 @@ function Banner() {
                 cars. Discover a seamless and trustworthy experience like never
                 before.
               </p>
-              <button className="banner-btn">Explore Now</button>
+              <button className="banner-btn" onClick={navigateToExploreCars}>
+                Explore Now
+              </button>
             </div>
             <div className="col-md-6">
               <img src="./images/banner.png" className="w-100" />

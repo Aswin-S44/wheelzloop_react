@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./BlogsScreen.css";
 
 function BlogsScreen() {
+  useEffect(() => {
+    const hash = window.location.hash.slice(1); // Get hash without #
+    if (hash) {
+      const element = document.getElementById(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, []);
   return (
     <section>
       <div className="blogs-container">
-        <div className="blog-card">
+        <div className="blog-card" id="used-car-tips">
           <h1 className="blog-title">Top Tips for Buying a Used Car</h1>
           <p className="blog-date">Published on December 6, 2024</p>
           <img
@@ -52,7 +61,7 @@ function BlogsScreen() {
           </div>
         </div>
       </div>
-      <div className="blogs-container">
+      <div className="blogs-container" id="best-price">
         <div className="blog-card">
           <h1 className="blog-title">How to Get the Best Price for Your Car</h1>
           <p className="blog-date">Published on December 6, 2024</p>
@@ -114,7 +123,7 @@ function BlogsScreen() {
           </div>
         </div>
       </div>
-      <div className="blogs-container">
+      <div className="blogs-container" id="maintainance-checklist">
         <div className="blog-card">
           <h1 className="blog-title">Car Maintenance Checklist</h1>
           <p className="blog-date">Published on December 6, 2024</p>
@@ -188,7 +197,7 @@ function BlogsScreen() {
           </div>
         </div>
       </div>
-      <div className="blogs-container">
+      <div className="blogs-container" id="latest-trends">
         <div className="blog-card">
           <h1 className="blog-title">Latest Trends in the Used Car Market</h1>
           <p className="blog-date">Published on December 6, 2024</p>

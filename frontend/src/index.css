@@ -5,6 +5,10 @@
   padding: 0;
 }
 
+body{
+  cursor: pointer;
+}
+
 section {
   padding: 60px;
 }
