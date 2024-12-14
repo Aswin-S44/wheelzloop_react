@@ -10,8 +10,8 @@ module.exports.sendEmail = async (
     var transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "wheelzloop@gmail.com", //process.env.EMAIL_USER,
-        pass: "zcpnzjhyvrbjijsn", // process.env.EMAIL_PASS,
+        user: process.env.ROOT_EMAIL, //process.env.EMAIL_USER,
+        pass: process.env.ROOT_PASSWORD, // process.env.EMAIL_PASS,
       },
     });
 
