@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 
 function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const initialValues = {
@@ -30,6 +31,7 @@ function LoginScreen() {
 
   const handleSubmit = async (values) => {
     try {
+      setLoading(true);
       const { data } = await axios.post(
         `${BACKEND_URL}/api/v1/user/login`,
         {
@@ -39,6 +41,7 @@ function LoginScreen() {
       );
       console.log(data);
       const { success, message } = data;
+      setLoading(false);
       if (success) {
         Swal.fire({
           title: "Good job!",
@@ -53,54 +56,69 @@ function LoginScreen() {
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h1 className="login-title">Login</h1>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          <Form className="login-form">
-            <div className="form-group">
-              <label htmlFor="email">Email or Phone Number</label>
-              <Field type="text" name="email" id="email" />
-              <ErrorMessage name="email" component="div" className="error" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <div className="password-wrapper">
-                <Field
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  id="password"
-                />
-                <button
-                  type="button"
-                  className="toggle-password"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? "🙈" : "👁️"}
-                </button>
+    <div>
+      {loading && (
+        <div className="overlay show">
+          <div className="message">Please Wait...</div>
+        </div>
+      )}
+      <div className="login-container">
+        <div className="login-card">
+          <h1 className="login-title">Login</h1>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            <Form className="login-form">
+              <div className="form-group">
+                <label htmlFor="email">Email or Phone Number</label>
+                <Field type="text" name="email" id="email" />
+                <ErrorMessage name="email" component="div" className="error" />
               </div>
-              <ErrorMessage name="password" component="div" className="error" />
-            </div>
-            <button type="submit" className="submit-btn">
-              Login
-            </button>
-          </Form>
-        </Formik>
-        <div className="login-links">
-          <p onClick={() => navigate("/register")} className="link-text">
-            Create New Account
-          </p>
-          <p onClick={() => navigate("/reset-password")} className="link-text">
-            Forgot Password?
-          </p>
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <div className="password-wrapper">
+                  <Field
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    id="password"
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="error"
+                />
+              </div>
+              <button type="submit" className="submit-btn" disabled={loading}>
+                Login
+              </button>
+            </Form>
+          </Formik>
+          <div className="login-links">
+            <p onClick={() => navigate("/register")} className="link-text">
+              Create New Account
+            </p>
+            <p
+              onClick={() => navigate("/reset-password")}
+              className="link-text"
+            >
+              Forgot Password?
+            </p>
+          </div>
         </div>
       </div>
     </div>

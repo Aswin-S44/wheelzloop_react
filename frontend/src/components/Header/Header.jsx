@@ -5,8 +5,9 @@ import useAuth from "../../hooks/useAuth";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const { username, logout, isLoggedIn, currentUser } = useAuth();
+  const { username, logout, isLoggedIn } = useAuth();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -14,6 +15,14 @@ function Header() {
 
   const closeMenu = () => {
     setMenuOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const closeDropdown = () => {
+    setDropdownOpen(false);
   };
 
   const goToLogin = () => {
@@ -31,9 +40,7 @@ function Header() {
         <a href="/">Home</a>
         <a href="/about-us">About Us</a>
         <a href="/used-cars">Explore Cars</a>
-        {console.log("is loggedin------", isLoggedIn)}
         {!isLoggedIn && <a href="/cars/saved">Favourites</a>}
-
         <a href="/reviews">Reviews</a>
         <a href="/blogs">Blogs</a>
         <a href="/contact-us">Contact Us</a>
@@ -41,22 +48,28 @@ function Header() {
           <div className="dropdown">
             <button
               className="btn dropdown-toggle login-btn"
-              type="button"
-              id="dropdownMenuButton"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
+              onClick={toggleDropdown}
             >
               {username}
             </button>
-            {/* <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a className="dropdown-item" href="/profile">
-                My Profile
-              </a>
-              <a className="dropdown-item" href="#" onClick={logout}>
-                Logout
-              </a>
-            </div> */}
+            {dropdownOpen && (
+              <div className="dropdown-menu">
+                <a className="dropdown-item" href="/profile">
+                  My Profile
+                </a>
+                <a
+                  className="dropdown-item"
+                  href="#"
+                  onClick={() => {
+                    logout();
+                    closeDropdown();
+                    window.location.reload();
+                  }}
+                >
+                  Logout
+                </a>
+              </div>
+            )}
           </div>
         ) : (
           <button className="login-btn" onClick={goToLogin}>

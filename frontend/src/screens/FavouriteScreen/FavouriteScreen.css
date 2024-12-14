@@ -31,8 +31,8 @@
   }
   
   .car-image {
-    width: 100px;
-    height: auto;
+    /* width: 100px;
+    height: auto; */
     object-fit: cover;
     border-radius: 5px;
   }
