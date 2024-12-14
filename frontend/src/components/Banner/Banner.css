@@ -44,10 +44,14 @@
 
     .banner-content {
         max-width: 100%;
+        padding: 15px;
     }
 
     .banner-image {
         max-width: 100%;
+    }
+    .banner-im{
+        margin-top: 44px;
     }
 
 }

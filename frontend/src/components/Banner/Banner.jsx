@@ -23,7 +23,7 @@ function Banner() {
                 Explore Now
               </button>
             </div>
-            <div className="col-md-6">
+            <div className="col-md-6 banner-im">
               <img src="./images/banner.png" className="w-100" />
             </div>
           </div>

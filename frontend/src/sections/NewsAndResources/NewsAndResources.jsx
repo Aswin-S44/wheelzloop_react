@@ -75,7 +75,10 @@ const NewsAndResources = () => {
               <h2 className="news-card-title">{article.title}</h2>
               <p className="news-category">{article.category}</p>
               <p className="news-text">{article.description}</p>
-              <a href={article.link} className="news-link">
+              <a
+                onClick={() => handleCardClick(article.link)}
+                className="news-link"
+              >
                 Read More
               </a>
             </div>

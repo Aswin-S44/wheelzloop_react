@@ -4,6 +4,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../../constants/urls";
 import EmptyState from "../../components/EmptyState/EmptyState";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Loader from "../../components/Loader/Loader";
 
 function FavouriteScreen() {
   const [savedCars, setSavedCars] = useState([]);
@@ -29,7 +30,7 @@ function FavouriteScreen() {
             savedIds: favCars,
           }
         );
-        console.log("data----------", data.cars);
+
         if (data && data.cars && data.cars.length > 0) {
           setLoading(false);
           setSavedCars(data.cars);
@@ -48,7 +49,11 @@ function FavouriteScreen() {
         <h2 className="mt-5">Saved Cars</h2>
 
         <div className="favourite-screen p-5 mt-1 w-100">
-          {savedCars.length > 0 ? (
+          {loading ? (
+            <>
+              <Loader />
+            </>
+          ) : savedCars.length > 0 ? (
             <div className="w-100">
               <table className="car-table w-100">
                 <thead>
