@@ -35,7 +35,7 @@
     height: auto;
     border-radius: 5px;
     margin-right: 10px;
-    border: 1px solid #28a745;
+    border: 1px solid rgb(222, 49, 99);
   }
   
   .details-section {
@@ -68,7 +68,7 @@
   }
   
   .inquiry-button {
-    background-color: #21cb98;
+    background-color: rgb(222, 49, 99);
     color: white;
     border: none;
     padding: 10px;
@@ -132,20 +132,27 @@
   }
   
   .spec-details-box{
-    border: 1px solid #28a745;
+    border: 1px solid rgb(222, 49, 99);
     width: 90%;
   }
   
   .spec-text{
     color: rgb(117, 112, 112);
     font-size: 18px;
-    font-weight: 600;
-    font-family: sans-serif;
+    font-weight: 500;
+    font-family: 'Inter';
     white-space: no-wrap;
+  }
+
+
+  .spec-icon{
+    color: rgb(222, 49, 99);
   }
   
   .spec-title{
-    color: rgb(26, 157, 116);
+    color: rgb(20, 53, 42);
+    font-weight: 500;
+    font-family: 'Inter';
   }
   
   @media (max-width: 768px) {
@@ -170,6 +177,15 @@
   
     .details-section {
       flex: none;
+      margin-top: 40px;
+      display: flex;
+      justify-content: flex-start;
+      left: -46px;
+      position: relative;
+    }
+
+    .spec-details-box{
+      margin-bottom: 40px;
     }
   
     h2 {
@@ -194,3 +210,21 @@
     }
   }
   
+
+  .imp-specs{
+    color: rgb(110, 108, 108);
+  }
+
+  @media (max-width: 768px) {
+    .main-image{
+      width: auto;
+      height: 280px;
+    }
+    .additional-image{
+      width: 100px;
+      height: auto;
+    }
+    .details-section{
+      margin-top: 50px;
+    }
+  }

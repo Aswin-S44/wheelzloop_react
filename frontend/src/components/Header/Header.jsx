@@ -31,6 +31,9 @@ function Header() {
         <a href="/">Home</a>
         <a href="/about-us">About Us</a>
         <a href="/used-cars">Explore Cars</a>
+        {console.log("is loggedin------", isLoggedIn)}
+        {!isLoggedIn && <a href="/cars/saved">Favourites</a>}
+
         <a href="/reviews">Reviews</a>
         <a href="/blogs">Blogs</a>
         <a href="/contact-us">Contact Us</a>

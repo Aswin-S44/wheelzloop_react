@@ -89,7 +89,7 @@ export default function TransitionsModal({ car, open, handleClose }) {
             <strong>Transmission:</strong> {car.transmission}
           </Typography>
           <Typography sx={{ mt: 1, fontSize: "16px" }}>
-            <strong>Price:</strong> ₹{car.rate.toLocaleString()}
+            <strong>Price:</strong> ₹{car?.rate?.toLocaleString()}
           </Typography>
           <Typography sx={{ mt: 1, fontSize: "16px" }}>
             <strong>Mileage:</strong> {car.mileage} km/l
@@ -106,15 +106,18 @@ export default function TransitionsModal({ car, open, handleClose }) {
               Car Images
             </Typography>
             <div style={galleryStyle}>
-              {car.images.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`Car image ${index + 1}`}
-                  style={imageStyle}
-                  onClick={() => handleOpenLightbox(image)}
-                />
-              ))}
+              {car &&
+                car?.images &&
+                car?.images.length > 0 &&
+                car.images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Car image ${index + 1}`}
+                    style={imageStyle}
+                    onClick={() => handleOpenLightbox(image)}
+                  />
+                ))}
             </div>
           </div>
 

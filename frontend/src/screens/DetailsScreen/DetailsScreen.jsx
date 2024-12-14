@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+
 import Modal from "@mui/material/Modal";
 import {
   FaCar,
@@ -15,16 +17,35 @@ import {
   FaHandHoldingUsd,
 } from "react-icons/fa";
 import "./DetailsScreen.css";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useParams } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-// import SpringModal from "../../Components/Modal/Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 // import CarCard from "../../Components/CarCard/CarCard";
 import { BACKEND_URL } from "../../constants/urls";
 // import { useAuth } from "../../context/AuthContext";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
+import PlaceIcon from "@mui/icons-material/Place";
+import { formattedDateTime } from "../../utils/time";
+import TransitionsModal from "../../components/Modal/Modal";
+import PeopleIcon from "@mui/icons-material/People";
+import CloseIcon from "@mui/icons-material/Close";
+import AirlineSeatReclineNormalIcon from "@mui/icons-material/AirlineSeatReclineNormal";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+} from "@mui/material";
+import SpringModal from "../../components/SpringModal/SpringModal";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 const style = {
   position: "absolute",
@@ -51,37 +72,31 @@ const DetailsScreen = () => {
 
   const [relatedCars, setRelatedCars] = useState([]);
   const [brand, setBrand] = useState(null);
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [openCarImage, setOpenCarImage] = useState(false);
 
   const [filters, setFilters] = useState({
     brand: null,
   });
 
-  useEffect(() => {
-    const fetchRelatedCars = async () => {
-      setLoading(true);
-      try {
-        // let url = `${BACKEND_URL}/api/v1/admin/get-cars?brand=${brand}&year=&page=1&limit=6&search=&priceRange=&fuelType=`;
-        // const res = await axios.get(url);
-        // if (res && res.data) {
-        //   const newCars = res?.data?.data;
-        //   if (newCars) {
-        //     const filteredCars = newCars.filter((car) => car._id !== id);
-        //     setRelatedCars((prevCars) => [...prevCars, ...filteredCars]);
-        //   }
-        // }
-      } catch (error) {
-        console.error("Error fetching cars:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRelatedCars();
-  }, [brand]);
+  const handleOpenCarImage = (car) => {
+    setSelectedCar(car);
+    setOpenCarImage(true);
+  };
 
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [openModals, setOpenModals] = useState(false);
+  const handleOpenModal = () => setOpenModals(true);
+  const handleCloseModal = () => setOpenModals(false);
+
+  const handleCloseCarImage = () => {
+    setOpenCarImage(false);
+    setSelectedCar(null);
+  };
 
   const handleFullNameChange = (e) => {
     setFullName(e.target.value);
@@ -94,7 +109,9 @@ const DetailsScreen = () => {
   };
 
   const validateForm = (name, number) => {
+    console.log("================");
     const isPhoneValid = /^[0-9]{10}$/.test(number);
+    console.log("isPhoneValid--------", isPhoneValid, number);
     setIsFormValid(name && isPhoneValid);
   };
   const [errors, setErrors] = useState({});
@@ -104,7 +121,7 @@ const DetailsScreen = () => {
       try {
         setLoading(true);
         let res = await axios.get(`${BACKEND_URL}/api/v1/customer/car/${id}`);
-        console.log("res-----------", res ? res : "no res");
+
         let favCars = JSON.parse(localStorage.getItem("fav-cars")) || [];
         if (favCars && favCars.length > 0) {
           if (favCars.includes(id)) {
@@ -148,11 +165,12 @@ const DetailsScreen = () => {
       allow_whatsapp_notification: formData?.allowMessages,
       carId: id,
     };
+    console.log("data0bj : ", dataObj);
     // await sendEnquiry(dataObj);
-    toast.success("successful");
-    formData.fullName = "";
-    formData.phoneNumber = "";
-    formData.allowMessages = "";
+    // toast.success("successful");
+    // formData.fullName = "";
+    // formData.phoneNumber = "";
+    // formData.allowMessages = "";
   };
 
   const addToFav = async () => {
@@ -172,15 +190,85 @@ const DetailsScreen = () => {
     }
   };
 
+  const [formData, setFormData] = React.useState({
+    fullName: "",
+    phoneNumber: "",
+    allowMessages: false,
+  });
+
+  const [isSubmitEnabled, setIsSubmitEnabled] = React.useState(false);
+
+  const [formError, setFormError] = React.useState({
+    fullName: "",
+    phoneNumber: "",
+  });
+
+  const validateForms = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = "Full Name is required";
+      isValid = false;
+    }
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!formData.phoneNumber || !phoneRegex.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = "Phone Number must be 10 digits";
+      isValid = false;
+    }
+
+    setFormError(newErrors);
+    return isValid;
+  };
+
+  const handleChange = (e) => {
+    const { name, value, checked, type } = e.target;
+    console.log("value : ", value);
+    console.log("name : ", name);
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+  const [formLoading, setFormLoading] = useState(false);
+  React.useEffect(() => {
+    const isValid = validateForms();
+    console.log("isvalid : ", isValid);
+    setIsSubmitEnabled(isValid);
+  }, [formData]);
+
+  const handleSubmitForm = async (e) => {
+    e.preventDefault();
+    setFormLoading(true);
+
+    formData.carId = id;
+    let res = await axios.post(`${BACKEND_URL}/api/v1/customer/enquiry/send`, {
+      formData,
+    });
+    setFormLoading(false);
+    Swal.fire({
+      title: "Success!",
+      text: "We have received your Enquiry, we will send the details within 5 minutes",
+      icon: "success",
+    });
+    handleCloseModal();
+  };
+
   return (
     <section>
+      {formLoading && (
+        <div className="overlay show">
+          <div className="message">Please Wait...</div>
+        </div>
+      )}
       <div className="mt-0">
         <div className="details-screen p-5">
           <div className="image-section">
             <img
               src={car?.image || car?.images[0]}
               alt={car?.car_name}
-              className="main-image"
+              className="w-100 main-image"
             />
             <div className="additional-images">
               {car &&
@@ -193,6 +281,7 @@ const DetailsScreen = () => {
                       src={img}
                       alt={`Additional ${index + 1}`}
                       className="additional-image"
+                      onClick={() => handleOpenCarImage(car)}
                     />
                   </>
                 ))}
@@ -205,21 +294,28 @@ const DetailsScreen = () => {
                     src={img}
                     alt={`Additional ${index + 1}`}
                     className="additional-image"
+                    onClick={() => handleOpenCarImage(car.images[index])}
                   />
                 ))}
             </div>
           </div>
           <div className="details-section mt-0">
+            <h6>
+              Posted On -{" "}
+              {car?.createdAt
+                ? formattedDateTime(car.createdAt)
+                : "Unavailable"}
+            </h6>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <h2 className="car-name">
-                {car?.car_name} - {car?.brand}
+                {car?.name} - {car?.brand}
               </h2>
-              <BookmarkBorderIcon
+              <FavoriteIcon
                 onClick={() => addToFav()}
                 style={{
                   top: "10px",
                   position: "relative",
-                  color: isFavourite ? "gold" : "black",
+                  color: isFavourite ? "red" : "black",
                 }}
               />
             </div>
@@ -230,33 +326,26 @@ const DetailsScreen = () => {
                 <h4 style={{ fontSize: "16px", color: "green" }}>Available</h4>
               )}
             </div>
-            <div className="specifications mt-3">
-              <div className="spec-item">
-                <FaCar /> {car?.model}
-              </div>
-              <div className="spec-item">
-                <FaDollarSign /> {car?.price}
-              </div>
-              <div className="spec-item">
-                <FaCalendarAlt /> {car?.year}
-              </div>
-              <div className="spec-item">
-                <FaTachometerAlt /> {car?.kilometer} km
-              </div>
-              <div className="spec-item">
-                <FaRoad /> {car?.transmission_type}
-              </div>
-              <div className="spec-item">
-                <FaUsers /> {car?.owner}
-              </div>
-              <div className="spec-item">
-                <FaWrench /> {car?.engine}
-              </div>
+            <div>
+              <h4>
+                <CurrencyRupeeIcon /> {car?.rate ?? "Unavailable"}
+              </h4>
+            </div>
+            <div className="imp-specs mt-2">
+              {car?.fuelType || ""} | {car?.transmission ?? ""} |{" "}
+              {car?.kilometer ?? ""} Km
+            </div>
+            <div className="mt-2">
+              <PlaceIcon /> {car?.place ?? ""}
             </div>
             <p>{car?.about}</p>
             {!car?.sold ? (
-              <button className="inquiry-button" onClick={handleOpen}>
-                Get Seller Details
+              <button
+                className="inquiry-button p-3 mt-2"
+                // onClick={handleOpen}
+                onClick={handleOpenModal}
+              >
+                Get Seller Detailsdsds
               </button>
             ) : (
               <button className="btn btn-secondary" disabled>
@@ -264,13 +353,14 @@ const DetailsScreen = () => {
               </button>
             )}
           </div>
-          {/* <SpringModal
-          open={open}
-          handleClose={handleClose}
-          onSubmit={handleSubmit}
-        /> */}
+          <SpringModal
+            open={open}
+            handleClose={handleClose}
+            onSubmit={handleSubmit}
+          />
           <ToastContainer />
         </div>
+        {console.log("car--------", car ? car : "no car")}
         <div className="container p-5 spec-details-box">
           <div className="spec-details p-4">
             <div className="row">
@@ -278,72 +368,192 @@ const DetailsScreen = () => {
                 {" "}
                 <div className="spec-item">
                   <div className="icon">
-                    <FaTools style={{ fontSize: "24px" }} />
+                    <FaTools
+                      style={{ fontSize: "24px" }}
+                      className="spec-icon"
+                    />
                   </div>
                   <div className="spec-text">
-                    <span className="spec-title">Variant</span>{" "}
-                    {car?.variant || "Unavailable"}
+                    <span className="spec-title">Mileage</span>{" "}
+                    {car?.mileage || "Unavailable"} Km
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-3">
+                {" "}
+                <div className="spec-item">
+                  <div className="icon">
+                    <PeopleIcon
+                      style={{ fontSize: "24px" }}
+                      className="spec-icon"
+                    />
+                  </div>
+                  <div className="spec-text">
+                    <span className="spec-title">Ownership</span>{" "}
+                    {car?.ownership || "Unavailable"}{" "}
+                    {car?.ownership == 1
+                      ? "st"
+                      : car?.ownership == 2
+                      ? "nd"
+                      : car?.ownership == 3
+                      ? "rd"
+                      : "th"}
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-3">
+                {" "}
+                <div className="spec-item">
+                  <div className="icon">
+                    <AirlineSeatReclineNormalIcon
+                      style={{ fontSize: "24px" }}
+                      className="spec-icon"
+                    />
+                  </div>
+                  <div className="spec-text">
+                    <span className="spec-title">Seats</span>{" "}
+                    {car?.totalSeats || "Unavailable"}{" "}
                   </div>
                 </div>
               </div>
               <div className="col-md-3">
+                {" "}
                 <div className="spec-item">
                   <div className="icon">
-                    <FaShieldAlt style={{ fontSize: "24px" }} />
+                    <AirlineSeatReclineNormalIcon
+                      style={{ fontSize: "24px" }}
+                      className="spec-icon"
+                    />
                   </div>
                   <div className="spec-text">
-                    <span className="spec-title"> Claim Status</span>{" "}
-                    {car?.claim ? "Claimed" : "Not Claimed"}
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-3">
-                <div className="spec-item">
-                  <div className="icon">
-                    <FaExclamationTriangle style={{ fontSize: "24px" }} />
-                  </div>
-                  <div className="spec-text">
-                    <span className="spec-title">Major Accident</span>{" "}
-                    {car?.major_accident ? "Yes" : "No"}
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-3">
-                <div className="spec-item">
-                  <div className="icon">
-                    <FaStore style={{ fontSize: "24px" }} />
-                  </div>
-                  <div className="spec-text">
-                    <span className="spec-title">Shop Name</span>{" "}
-                    {car?.shop_name || "Unavailable"}
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-3">
-                <div className="spec-item">
-                  <div className="icon">
-                    <FaHandHoldingUsd style={{ fontSize: "24px" }} />
-                  </div>
-                  <div className="spec-text">
-                    <span className="spec-title">Loan Available</span>{" "}
-                    {car?.loan_available ? "Yes" : "No"}
+                    <span className="spec-title">Rate Negotiable</span>{" "}
+                    {car?.priceNegotiable ? "Yes" : "No" || "Unavailable"}{" "}
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="related-cars-list mt-4">
-          {/* <div className="container">
-            <h5 style={{ fontWeight: "600" }}>
-              Related Cars ({" "}
-              {relatedCars && relatedCars.length > 0 ? relatedCars.length : 0})
-            </h5>
-           
-          </div> */}
-        </div>
       </div>
+      {console.log("selected car : ", selectedCar)}
+      {selectedCar && (
+        // <TransitionsModal
+        //   car={selectedCar}
+        //   open={openCarImage}
+        //   handleClose={handleCloseCarImage}
+        // />
+        <Dialog open={openCarImage} onClose={handleCloseCarImage}>
+          <div className="row">
+            <DialogTitle>Image Preview</DialogTitle>
+            {/* <DialogActions>
+              <Button
+                style={{ float: "right" }}
+                onClick={handleCloseCarImage}
+                color="primary"
+              >
+                <CloseIcon style={{ color: "#111" }} />
+              </Button>
+            </DialogActions> */}
+          </div>
+
+          <DialogContent>
+            <img
+              src={selectedCar}
+              alt="Lightbox preview"
+              style={{ width: "100%" }}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+      <Modal
+        open={openModals}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography
+            id="spring-modal-title"
+            variant="h5"
+            component="h2"
+            sx={{ mb: 3, textAlign: "center", fontWeight: "bold" }}
+          >
+            Fill in your details
+          </Typography>
+
+          <form onSubmit={handleSubmitForm}>
+            <div className="w-100">
+              <Typography className="input-field-label">Full Name</Typography>
+              <input
+                style={{ outline: "none" }}
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                className={`w-100 input-field ${
+                  errors.fullName ? "input-field-error" : ""
+                }`}
+              />
+            </div>
+            {errors.fullName && (
+              <Typography color="error" variant="body2">
+                {errors.fullName}
+              </Typography>
+            )}
+            <div className="mt-3"></div>
+
+            <Typography className="input-field-label">Phone Number</Typography>
+            <input
+              style={{ outline: "none" }}
+              type="text"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              className={`w-100 input-field ${
+                errors.phoneNumber ? "input-field-error" : ""
+              }`}
+            />
+            {errors.phoneNumber && (
+              <Typography color="error" variant="body2">
+                {errors.phoneNumber}
+              </Typography>
+            )}
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.allowMessages}
+                  onChange={handleChange}
+                  name="allowMessages"
+                  sx={{ color: "#333", marginRight: 1 }}
+                />
+              }
+              label="Allow messages on WhatsApp"
+            />
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{
+                backgroundColor: "rgb(222, 49, 99)",
+                mt: 3,
+                width: "100%",
+                padding: "10px 0",
+                borderRadius: "5px",
+                "&:hover": {
+                  backgroundColor: "#1fa98f",
+                },
+              }}
+              disabled={!isSubmitEnabled}
+            >
+              Submit
+            </Button>
+          </form>
+        </Box>
+      </Modal>
     </section>
   );
 };

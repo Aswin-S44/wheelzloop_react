@@ -12,25 +12,76 @@ import { BACKEND_URL } from "../../constants/urls";
 import { useNavigate } from "react-router-dom";
 import PlaceIcon from "@mui/icons-material/Place";
 import Loader from "../../components/Loader/Loader";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import SearchIcon from "@mui/icons-material/Search";
 
 function AllCars() {
   const isMobile = useMobileView();
   const [cars, setCars] = useState(carData);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({});
+  const [search, setSearch] = useState("");
+  const [filteredCars, setFilteredCars] = useState([]);
+  const [sort, setSort] = useState("createdAt");
+  const [isFavourite, setIsFavourite] = useState(false);
+
+  const [favCars, setFavCars] = useState([]);
+
+  const fetchFavCars = () => {
+    const savedFavCars = JSON.parse(localStorage.getItem("fav-cars")) || [];
+    setFavCars(savedFavCars);
+  };
+
   const handleFilterChange = (updatedFilters) => {
     setFilters(updatedFilters);
   };
   const navigate = useNavigate();
 
+  const addToFav = (id) => {
+    let updatedFavCars = [...favCars];
+
+    if (!favCars.includes(id)) {
+      updatedFavCars.push(id);
+      localStorage.setItem("fav-cars", JSON.stringify(updatedFavCars));
+      toast.success("Added to favourites");
+    } else {
+      updatedFavCars = updatedFavCars.filter((favId) => favId !== id);
+      localStorage.setItem("fav-cars", JSON.stringify(updatedFavCars));
+      toast.error("Removed from favourites");
+    }
+
+    setFavCars(updatedFavCars);
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearch(query);
+
+    if (query) {
+      const results = cars.filter(
+        (car) =>
+          car.name.toLowerCase().includes(query) ||
+          car.varient.toLowerCase().includes(query) ||
+          car.brand.toLowerCase().includes(query) ||
+          car.place.toLowerCase().includes(query)
+      );
+      setFilteredCars(results);
+    } else {
+      setFilteredCars([]);
+    }
+  };
+
   useEffect(() => {
     const fetchCars = async () => {
       try {
         setLoading(true);
-        let { data } = await axios.get(
+        const { data } = await axios.get(
           `${BACKEND_URL}/api/v1/customer/cars/all`,
           {
-            params: filters,
+            params: { ...filters, sort },
           }
         );
 
@@ -43,8 +94,10 @@ function AllCars() {
         console.log("Error while fetching cars : ", error);
       }
     };
+
     fetchCars();
-  }, [filters]);
+    fetchFavCars();
+  }, [filters, search, sort]);
 
   return (
     <section>
@@ -67,7 +120,47 @@ function AllCars() {
             </div>
           </div>
           <div className="col-md-8">
-            {/* <Carousel /> */}
+            <div className="search-container w-100">
+              <input
+                type="text"
+                placeholder="Search by name, brand, model etc...."
+                name="search"
+                className="custom-input w-100"
+                value={search}
+                onChange={handleSearchChange}
+              />
+              <SearchIcon className="search-icon" />
+            </div>
+
+            {filteredCars.length > 0 && (
+              <div className="search-results">
+                {filteredCars.map((car, index) => (
+                  <div
+                    key={index}
+                    className="search-result-item"
+                    onClick={() => navigate(`/details/${car._id}`)}
+                  >
+                    <p>
+                      {car.name} - {car.varient} ({car.brand})
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-3">
+              <Carousel />
+            </div>
+            <div>
+              <select
+                className="w-25 mt-3"
+                onChange={(e) => setSort(e.target.value)}
+                value={sort}
+              >
+                <option value="createdAt">Latest - Oldest</option>
+                <option value="-createdAt">Oldest - Latest</option>
+              </select>
+            </div>
             <div className="car-list mt-3">
               {cars.length === 0 && !loading ? (
                 <div
@@ -82,19 +175,28 @@ function AllCars() {
                 </>
               ) : (
                 cars.map((car, index) => (
-                  <div
-                    key={index}
-                    className="car-card-2"
-                    onClick={() => navigate(`/details/${car?._id}`)}
-                  >
+                  <div key={index} className="car-card-2 m-2">
+                    {favCars.includes(car._id) ? (
+                      <FavoriteIcon
+                        style={{ color: "red" }}
+                        onClick={() => addToFav(car._id)}
+                      />
+                    ) : (
+                      <FavoriteBorderIcon onClick={() => addToFav(car._id)} />
+                    )}
                     {car && car.images && car.images.length > 0 && (
                       <img
                         src={car.images[0]}
                         alt={car.car_name}
                         className="car-image-2"
+                        onClick={() => navigate(`/details/${car?._id}`)}
                       />
                     )}
-                    <div className="car-details">
+
+                    <div
+                      className="car-details"
+                      onClick={() => navigate(`/details/${car?._id}`)}
+                    >
                       <h5>
                         {car.name} - {car.varient}
                       </h5>

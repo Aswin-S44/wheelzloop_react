@@ -1,0 +1,30 @@
+.input-field {
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid #111;
+    border-bottom: 2px solid #21cb98; /* Custom bottom line color */
+    outline: none;
+    font-size: 16px;
+    color: #333;
+    padding: 8px 0;
+    margin-bottom: 16px;
+    transition: border-color 0.3s ease;
+    border: none;
+   
+  }
+  
+  .input-field:focus {
+    border-bottom: 2px solid #21cb98; /* Change color on focus */
+  }
+  
+  .input-field-error {
+    border-bottom: 2px solid red; /* Red border for error */
+  }
+  
+  .input-field-label {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  

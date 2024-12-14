@@ -24,10 +24,13 @@ const useAuth = () => {
       );
 
       const { status, user, me } = data;
-      setUsername(user);
-      setIsLoggedIn(true);
-      setCurrentUser(me);
+      // setUsername(user);
+      // setIsLoggedIn(true);
+      // setCurrentUser(me);
       if (status) {
+        setUsername(user);
+        setIsLoggedIn(true);
+        setCurrentUser(me);
       } else {
         removeCookie("token");
         // navigate("/login");
