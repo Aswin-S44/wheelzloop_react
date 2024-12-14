@@ -31,8 +31,8 @@
     font-size: 16px;
     color: #333;
     margin-bottom: 8px;
-    font-weight: 600;
-    font-family: sans-serif;
+    font-weight: 500;
+    font-family: 'Inter';
   }
   
   .price-slider {
@@ -76,7 +76,7 @@
   }
   
   .accordion-button.active {
-    background-color: #21cb98;
+    background-color: #cb2169;
     color: #fff;
   }
   
@@ -125,5 +125,20 @@
   
   .apply-filter:hover {
     background-color: #1c9a7f;
+  }
+  
+  .price-range-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .price-slider {
+    width: 48%;
+    margin-right: 10px;
+  }
+  
+  .price-range {
+    margin-top: 10px;
+    font-weight: bold;
   }
   

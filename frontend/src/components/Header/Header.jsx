@@ -24,13 +24,16 @@ function Header() {
     <header className="header">
       <div className="logo">
         <a href="/" style={{ textDecoration: "none", color: "#DE3163" }}>
-          Wheelz<span style={{ color: "#111" }}>Loop</span>
+          Wheelzloop
         </a>
       </div>
       <nav className={`nav-links ${menuOpen ? "open" : ""}`}>
         <a href="/">Home</a>
         <a href="/about-us">About Us</a>
         <a href="/used-cars">Explore Cars</a>
+        {console.log("is loggedin------", isLoggedIn)}
+        {!isLoggedIn && <a href="/cars/saved">Favourites</a>}
+
         <a href="/reviews">Reviews</a>
         <a href="/blogs">Blogs</a>
         <a href="/contact-us">Contact Us</a>
@@ -46,14 +49,14 @@ function Header() {
             >
               {username}
             </button>
-            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {/* <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <a className="dropdown-item" href="/profile">
                 My Profile
               </a>
               <a className="dropdown-item" href="#" onClick={logout}>
                 Logout
               </a>
-            </div>
+            </div> */}
           </div>
         ) : (
           <button className="login-btn" onClick={goToLogin}>

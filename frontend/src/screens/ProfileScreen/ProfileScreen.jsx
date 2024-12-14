@@ -3,8 +3,6 @@ import "./ProfileScreen.css";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import { BACKEND_URL } from "../../constants/urls";
-import EditIcon from "@mui/icons-material/Edit";
-import ShareIcon from "@mui/icons-material/Share";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Box from "@mui/material/Box";
@@ -21,9 +19,17 @@ import { useNavigate } from "react-router-dom";
 import EditCar from "../EditCar/EditCar";
 import Swal from "sweetalert2";
 import TransitionsModal from "../../components/Modal/Modal";
+import ProfileCard from "../../components/ProfileCard/ProfileCard";
+import HomeIcon from "@mui/icons-material/Home";
+import Loader from "../../components/Loader/Loader";
+import EmptyState from "../../components/EmptyState/EmptyState";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function ProfileScreen() {
   const [myCars, setMyCars] = useState([]);
+  const [savedCars, setSavedCars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [currentView, setCurrentView] = useState("list");
@@ -34,6 +40,10 @@ function ProfileScreen() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [fetching, setFetching] = useState(false);
+
   const handleOpen = (car) => {
     setSelectedCar(car);
     setOpen(true);
@@ -42,17 +52,50 @@ function ProfileScreen() {
 
   const handleChange = (event, newValue) => setValue(newValue);
 
-  useEffect(() => {
-    const fetchCars = async () => {
+  const fetchCars = async () => {
+    try {
+      setFetching(true);
       setLoading(true);
       const res = await axios.get(`${BACKEND_URL}/api/v1/user/cars/me`, {
+        params: { page, limit: 10 },
         withCredentials: true,
       });
       setLoading(false);
-      setMyCars(res?.data || []);
-    };
-    fetchCars();
-  }, []);
+      setMyCars((prev) => {
+        const newCars = res.data.cars.filter(
+          (car) => !prev.some((existingCar) => existingCar._id === car._id)
+        );
+        return [...prev, ...newCars];
+      });
+      setHasMore(res.data.cars.length > 0);
+      setFetching(false);
+    } catch (error) {
+      setFetching(false);
+    }
+  };
+
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 200 &&
+      hasMore &&
+      !fetching &&
+      myCars.length >= page * 10
+    ) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    if (myCars.length < page * 10) {
+      fetchCars();
+    }
+  }, [page]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [myCars, fetching, hasMore]);
 
   const handleAddCar = () => navigate("/add-car");
 
@@ -70,12 +113,29 @@ function ProfileScreen() {
     }
   };
 
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [activeDropdown]);
+  // useEffect(() => {
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [activeDropdown]);
+
+  const [savedCarLoading, setSavedCarsLoading] = useState(false);
+  const getSavedCars = async () => {
+    try {
+      setSavedCarsLoading(true);
+      let saved_cars = await axios.post(
+        `${BACKEND_URL}/api/v1/user/cars/saved`
+      );
+      if (saved_cars && saved_cars.data && saved_cars.data.cars) {
+        setSavedCarsLoading(false);
+        setSavedCars(saved_cars.data.cars);
+      }
+    } catch (error) {
+      console.log("Error while fetching saved cars : ", error);
+      setSavedCarsLoading(false);
+    }
+  };
 
   const handleEdit = (car) => {
     setSelectedCar(car);
@@ -115,33 +175,15 @@ function ProfileScreen() {
         <div className="container-fluid mt-4">
           <div className="row">
             <div className="col-md-3">
-              <div className="profile-card text-center">
-                <img
-                  src="https://via.placeholder.com/150"
-                  alt="Profile"
-                  className="profile-image"
-                />
-                <h3 className="profile-name">
-                  {currentUser?.name || "John Doe"}
-                </h3>
-                <p className="profile-date">Joined: January 1, 2023</p>
-                <div className="space-between">
-                  <button className="btn primary">
-                    <EditIcon />
-                    Edit Profile
-                  </button>
-                  <button className="btn secondary-btn">
-                    <ShareIcon />
-                    Share Profile
-                  </button>
-                </div>
-              </div>
+              <ProfileCard />
             </div>
             <div className="col-md-9">
-              <div className="space-between">
-                <h2 className="profile-breadcrumb">
-                  <a href="/">Home</a> <ArrowForwardIosIcon />{" "}
-                  <a href="/profile">Profile</a>
+              <div className="space-between mt-10">
+                <h2 className="breadcrumb">
+                  <a href="/">
+                    <HomeIcon />
+                  </a>{" "}
+                  <ArrowForwardIosIcon /> <a href="/profile">Profile</a>
                   {currentView === "edit" && (
                     <>
                       <ArrowForwardIosIcon /> Edit
@@ -149,14 +191,14 @@ function ProfileScreen() {
                   )}
                 </h2>
                 {currentView === "list" && (
-                  <button className="primary" onClick={handleAddCar}>
+                  <button className="primary-medium" onClick={handleAddCar}>
                     <AddCircleOutlineIcon />
                     Add New
                   </button>
                 )}
               </div>
               {currentView === "list" ? (
-                <div className="row mt-4">
+                <div className="row mt-0">
                   <Box
                     sx={{
                       width: "100%",
@@ -177,80 +219,189 @@ function ProfileScreen() {
                             icon={<DirectionsCarFilledIcon />}
                             label="My Cars"
                             value="1"
+                            sx={{
+                              color: "grey",
+                              fontSize: "0.9rem",
+                              flexDirection: "row",
+                              textTransform: "none",
+                              "&.Mui-selected": {
+                                color: "rgb(222, 49, 99)",
+                              },
+                              minWidth: "auto",
+                            }}
                           />
-                          <Tab
-                            icon={<CalendarMonthIcon />}
-                            label="1 month Ago"
-                            value="2"
-                          />
+
                           <Tab
                             icon={<FavoriteIcon />}
                             label="Saved"
                             value="3"
+                            onClick={getSavedCars}
+                            sx={{
+                              color: "grey",
+                              fontSize: "0.9rem",
+                              flexDirection: "row",
+                              textTransform: "none",
+                              "&.Mui-selected": {
+                                color: "rgb(222, 49, 99)",
+                              },
+                              minWidth: "auto",
+                            }}
                           />
                         </TabList>
                       </Box>
                       <TabPanel value="1">
                         <div className="cars-container">
-                          {myCars.map((car) => (
-                            <div className="car-card" key={car._id}>
+                          {loading ? (
+                            <Loader />
+                          ) : myCars.length == 0 && !loading ? (
+                            <>
+                              <EmptyState />
+                            </>
+                          ) : (
+                            myCars.map((car) => (
+                              <div className="car-card" key={car._id}>
+                                <div className="card-header">
+                                  <FaEllipsisV
+                                    className="dots-icon"
+                                    onClick={() => handleMenuClick(car._id)}
+                                  />
+                                  {activeDropdown === car._id && (
+                                    <div
+                                      className="dropdown-menu"
+                                      ref={(el) =>
+                                        (dropdownRefs.current[car._id] = el)
+                                      }
+                                    >
+                                      <button
+                                        onClick={() => {
+                                          handleOpen(car);
+                                        }}
+                                      >
+                                        <VisibilityIcon
+                                          sx={{
+                                            fontSize: "19px",
+                                            top: "-1px",
+                                            position: "relative",
+                                          }}
+                                        />{" "}
+                                        View
+                                      </button>
+                                      <button onClick={() => handleEdit(car)}>
+                                        <EditIcon
+                                          sx={{
+                                            fontSize: "19px",
+                                            top: "-1px",
+                                            position: "relative",
+                                          }}
+                                        />{" "}
+                                        Edit
+                                      </button>
+                                      <button
+                                        onClick={() => handleRemove(car._id)}
+                                      >
+                                        <DeleteIcon
+                                          sx={{
+                                            fontSize: "19px",
+                                            top: "-1px",
+                                            position: "relative",
+                                            color: "red",
+                                          }}
+                                        />{" "}
+                                        Remove
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                                <img
+                                  src={car?.images[0]}
+                                  alt={car.name}
+                                  className="car-image"
+                                />
+                                <div className="car-info">
+                                  <h2 className="car-name">{car.name}</h2>
+                                  <p>
+                                    Posted on :{" "}
+                                    {car.createdAt
+                                      ? formattedDateTime(car.createdAt)
+                                      : "_"}
+                                  </p>
+                                  <p className="car-details">
+                                    {car.year} | {car.varient} | {car.kilometer}{" "}
+                                    km
+                                  </p>
+                                  <p className="price">
+                                    ₹{car.rate.toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </TabPanel>
+                      <TabPanel value="2">
+                        {savedCarLoading ? (
+                          <Loader />
+                        ) : !savedCarLoading && savedCars.length == 0 ? (
+                          <EmptyState />
+                        ) : (
+                          savedCars.map((savedCar, index) => (
+                            <div className="car-card" key={index}>
                               <div className="card-header">
                                 <FaEllipsisV
                                   className="dots-icon"
-                                  onClick={() => handleMenuClick(car._id)}
+                                  onClick={() => handleMenuClick(savedCar._id)}
                                 />
-                                {activeDropdown === car._id && (
+                                {activeDropdown === savedCar._id && (
                                   <div
                                     className="dropdown-menu"
                                     ref={(el) =>
-                                      (dropdownRefs.current[car._id] = el)
+                                      (dropdownRefs.current[savedCar._id] = el)
                                     }
                                   >
                                     <button
-                                      onClick={() => {
-                                        handleOpen(car);
-                                      }}
+                                      onClick={() => handleRemove(savedCar._id)}
                                     >
-                                      View
-                                    </button>
-                                    <button onClick={() => handleEdit(car)}>
-                                      Edit
-                                    </button>
-                                    <button
-                                      onClick={() => handleRemove(car._id)}
-                                    >
+                                      <DeleteIcon
+                                        sx={{
+                                          fontSize: "19px",
+                                          top: "-1px",
+                                          position: "relative",
+                                          color: "red",
+                                        }}
+                                      />{" "}
                                       Remove
                                     </button>
                                   </div>
                                 )}
                               </div>
                               <img
-                                src={car?.images[0]}
-                                alt={car.name}
+                                src={savedCar?.images[0]}
+                                alt={savedCar.name}
                                 className="car-image"
                               />
                               <div className="car-info">
-                                <h2 className="car-name">{car.name}</h2>
+                                <h2 className="car-name">{savedCar.name}</h2>
                                 <p>
                                   Posted on :{" "}
-                                  {car.createdAt
-                                    ? formattedDateTime(car.createdAt)
+                                  {savedCar.createdAt
+                                    ? formattedDateTime(savedCar.createdAt)
                                     : "_"}
                                 </p>
                                 <p className="car-details">
-                                  {car.year} | {car.varient} | {car.kilometer}{" "}
-                                  km
+                                  {savedCar.year} | {savedCar.varient} |{" "}
+                                  {savedCar.kilometer} km
                                 </p>
-                                <p className="car-price">
-                                  ₹{car.rate.toLocaleString()}
+                                <p className="price">
+                                  ₹{savedCar.rate.toLocaleString()}
                                 </p>
                               </div>
                             </div>
-                          ))}
-                        </div>
+                          ))
+                        )}
                       </TabPanel>
-                      <TabPanel value="2">Item Two</TabPanel>
-                      <TabPanel value="3">Item Three</TabPanel>
+                      <TabPanel value="3">
+                        <EmptyState />
+                      </TabPanel>
                     </TabContext>
                   </Box>
                 </div>

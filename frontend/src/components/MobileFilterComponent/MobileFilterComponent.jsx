@@ -1,188 +1,211 @@
-import React, { useState } from "react";
-import { Drawer, Button, IconButton, Divider } from "@mui/material";
-import TuneIcon from "@mui/icons-material/Tune";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./MobileFilterComponent.css";
+import { BACKEND_URL } from "../../constants/urls";
+import { Modal, Button } from "react-bootstrap"; // Using Bootstrap modal for mobile view
+import TuneIcon from "@mui/icons-material/Tune";
 
-function MobileFilterComponent({ brands, years, places, onFilterChange }) {
-  const [filters, setFilters] = useState({
-    priceRange: "",
-    brand: "",
-    year: "",
-    place: "",
-    fuelType: "",
-  });
+function MobileFilterComponent({ onFilterChange }) {
+  const [priceMin, setPriceMin] = useState(5000);
+  const [priceMax, setPriceMax] = useState(2000000);
+  const [brandSearch, setBrandSearch] = useState("");
+  const [selectedFuel, setSelectedFuel] = useState([]);
+  const [selectedTransmission, setSelectedTransmission] = useState([]);
+  const [selectedYear, setSelectedYear] = useState("");
+  const [selectedModels, setSelectedModels] = useState([]);
+  const [kilometer, setKilometer] = useState(200000);
+  const [nameSearch, setNameSearch] = useState("");
+  const [showModal, setShowModal] = useState(false); // Modal state for mobile filter
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const priceRanges = [
-    { label: "1 - 3 Lakh", value: "100000-300000" },
-    { label: "4 - 10 Lakh", value: "400000-1000000" },
-    { label: "11 - 25 Lakh", value: "1100000-2500000" },
-    { label: "Above 25 Lakh", value: "2600000 - 2500000000" },
+  const yearLevel = [
+    { key: "1901 - 2000", value: "Below 2000" },
+    { key: "2001 - 2009", value: "2001 - 2009" },
+    { key: "2010 - 2020", value: "2010 - 2020" },
+    { key: "2021 - 2099", value: "Above 2021" },
   ];
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value,
-    }));
+  const transmissionTypes = [
+    { key: "Manual Automatic", name: "All", isChecked: true },
+    { key: "Manual", name: "Manual", isChecked: false },
+    { key: "Automatic", name: "Automatic", isChecked: false },
+  ];
+
+  const handleFuelChange = (event) => {
+    const value = event.target.value;
+    setSelectedFuel(
+      selectedFuel.includes(value)
+        ? selectedFuel.filter((fuel) => fuel !== value)
+        : [...selectedFuel, value]
+    );
   };
 
-  const handlePriceRangeChange = (range) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      priceRange: range,
-    }));
+  const handleTransmissionChange = (event) => {
+    const value = event.target.value;
+    setSelectedTransmission(
+      selectedTransmission.includes(value)
+        ? selectedTransmission.filter((trans) => trans !== value)
+        : [...selectedTransmission, value]
+    );
   };
 
-  const toggleDrawer = (open) => () => {
-    setIsDrawerOpen(open);
+  const handleYearChange = (event) => {
+    setSelectedYear(event.target.value);
   };
 
-  const applyFilters = () => {
+  const handleApplyFilter = () => {
+    const filters = {
+      priceMin,
+      priceMax,
+      brand: brandSearch,
+      fuelType: selectedFuel.join(","),
+      transmission: selectedTransmission.join(","),
+      year: selectedYear,
+      models: JSON.stringify(selectedModels),
+      kilometer,
+      name: nameSearch,
+    };
     onFilterChange(filters);
-    setIsDrawerOpen(false);
+    setShowModal(false); // Close the modal after applying the filters
   };
 
-  const handleResetFilters = () => {
-    setFilters({
-      priceRange: "",
-      brand: "",
-      year: "",
-      fuelType: "",
-    });
-    onFilterChange({
-      priceRange: "",
-      brand: "",
-      year: "",
-      fuelType: "",
-    });
+  const resetFilters = () => {
+    setPriceMin(5000);
+    setPriceMax(2000000);
+    setBrandSearch("");
+    setSelectedFuel([]);
+    setSelectedTransmission([]);
+    setSelectedYear("");
+    setKilometer(200000);
+    setNameSearch("");
   };
 
   return (
-    <div className="mobile-filter-component">
-      <button className="filter-button">
-        Apply Filter
-        <IconButton onClick={toggleDrawer(true)} aria-label="filter">
-          <TuneIcon style={{ color: "#fff" }} />
-        </IconButton>
+    <div className="mobile-filter-container">
+      <button onClick={() => setShowModal(true)} className="primary">
+        Filter
+        <TuneIcon />
       </button>
 
-      <Drawer anchor="bottom" open={isDrawerOpen} onClose={toggleDrawer(false)}>
-        <div className="drawer-content">
-          <h2 className="filter-title">Apply Filters</h2>
-          <Divider />
-
-          {/* Price Range Section with Chips */}
-          <div className="filter-group">
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Filter</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="filter-item">
             <label>Price Range</label>
-            <div className="price-chip-container">
-              {priceRanges.map((range) => (
-                <button
-                  key={range.value}
-                  className={`price-chip ${
-                    filters.priceRange === range.value ? "active" : ""
-                  }`}
-                  onClick={() => handlePriceRangeChange(range.value)}
-                >
-                  {range.label}
-                </button>
+            <div className="price-range-container">
+              <input
+                type="range"
+                min="0"
+                max="5000000"
+                value={priceMin}
+                onChange={(e) =>
+                  setPriceMin(Math.min(e.target.value, priceMax))
+                }
+                className="price-slider"
+              />
+              <input
+                type="range"
+                min="0"
+                max="5000000"
+                value={priceMax}
+                onChange={(e) =>
+                  setPriceMax(Math.max(e.target.value, priceMin))
+                }
+                className="price-slider"
+              />
+            </div>
+            <div className="price-range">
+              <span>{`₹${priceMin}`}</span> - <span>{`₹${priceMax}`}</span>
+            </div>
+          </div>
+
+          <div className="filter-item">
+            <label>Search Brand</label>
+            <input
+              type="text"
+              placeholder="Search Brand"
+              value={brandSearch}
+              onChange={(e) => setBrandSearch(e.target.value)}
+              className="search-box"
+            />
+          </div>
+
+          <div className="filter-item">
+            <label>Fuel Type</label>
+            <div className="checkbox-group">
+              {["Petrol", "Diesel", "Hybrid"].map((fuel) => (
+                <label key={fuel} className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    value={fuel}
+                    checked={selectedFuel.includes(fuel)}
+                    onChange={handleFuelChange}
+                  />
+                  {fuel}
+                </label>
               ))}
             </div>
           </div>
 
-          <div className="filter-group">
-            <label htmlFor="brand">Brand</label>
-            <select
-              id="brand"
-              name="brand"
-              value={filters.brand}
-              onChange={handleFilterChange}
-              className="filter-select"
-            >
-              <option value="">All Brands</option>
-              {brands?.length > 0 &&
-                brands.map((brand, index) => (
-                  <option key={index} value={brand}>
-                    {brand}
-                  </option>
-                ))}
-            </select>
+          <div className="filter-item">
+            <label>Transmission</label>
+            <div className="checkbox-group">
+              {transmissionTypes.map((trans) => (
+                <label key={trans.name} className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    value={trans.name}
+                    checked={selectedTransmission.includes(trans.name)}
+                    onChange={handleTransmissionChange}
+                  />
+                  {trans.name}
+                </label>
+              ))}
+            </div>
           </div>
 
-          <div className="filter-group">
-            <label htmlFor="brand">Location</label>
-            <select
-              id="place"
-              name="place"
-              value={filters.place}
-              onChange={handleFilterChange}
-              className="filter-select"
-            >
-              <option value="">All locations</option>
-              {places?.length > 0 &&
-                places.map((place, index) => (
-                  <option key={index} value={place}>
-                    {place}
-                  </option>
-                ))}
-            </select>
+          <div className="filter-item">
+            <label>Year</label>
+            <div className="radio-group">
+              {yearLevel.map((year, index) => (
+                <label key={index} className="radio-label">
+                  <input
+                    type="radio"
+                    name="year"
+                    value={year.key}
+                    checked={selectedYear === year.key}
+                    onChange={handleYearChange}
+                    className="m-2"
+                  />
+                  {year.value}
+                </label>
+              ))}
+            </div>
           </div>
 
-          <div className="filter-group">
-            <label htmlFor="year">Year</label>
-            <select
-              id="year"
-              name="year"
-              value={filters.year}
-              onChange={handleFilterChange}
-              className="filter-select"
-            >
-              <option value="">All Years</option>
-              {years?.length > 0 &&
-                years.map((year, index) => (
-                  <option key={index} value={year}>
-                    {year}
-                  </option>
-                ))}
-            </select>
+          <div className="filter-item">
+            <label>Kilometers Driven</label>
+            <input
+              type="range"
+              min="0"
+              max="200000"
+              value={kilometer}
+              onChange={(e) => setKilometer(e.target.value)}
+              className="kilometer-slider"
+            />
+            <div>{kilometer} km</div>
           </div>
-
-          <div className="filter-group">
-            <label htmlFor="fuelType">Fuel Type</label>
-            <select
-              id="fuelType"
-              name="fuelType"
-              value={filters.fuelType}
-              onChange={handleFilterChange}
-              className="filter-select"
-            >
-              <option value="">All Fuel Types</option>
-              <option value="Petrol">Petrol</option>
-              <option value="Diesel">Diesel</option>
-              <option value="Electric">Electric</option>
-            </select>
-          </div>
-
-          <div className="drawer-actions">
-            <button
-              onClick={applyFilters}
-              variant="contained"
-              className="filter-button p-2"
-            >
-              Apply Filters
-            </button>
-            <button
-              onClick={handleResetFilters}
-              variant="text"
-              className="btn btn-danger m-2"
-            >
-              Reset Filters
-            </button>
-          </div>
-        </div>
-      </Drawer>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={resetFilters}>
+            Reset
+          </Button>
+          <button className="primary" onClick={handleApplyFilter}>
+            Apply Filters
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

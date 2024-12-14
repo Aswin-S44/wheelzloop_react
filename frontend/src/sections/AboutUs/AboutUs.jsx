@@ -9,7 +9,7 @@ function AboutUs() {
           <div className="col-md-6 mt-5">
             <img
               src="https://cdn.pixabay.com/photo/2024/09/08/08/52/car-9031576_1280.png"
-              className="w-100"
+              className="w-100 about-im"
             />
           </div>
           <div className="col-md-6 mt-5">

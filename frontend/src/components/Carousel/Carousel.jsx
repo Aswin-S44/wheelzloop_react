@@ -28,14 +28,14 @@ function Carousel() {
           </div>
           <div class="carousel-item">
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStNUDCeYG3jOl2BqRUfFQdK2_8uV016G8CBg&s"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzqTWypqy1htmethbKe3xvKsga7sP_Rw5Usw&s"
               class="d-block w-100"
               alt="..."
             />
           </div>
           <div class="carousel-item">
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStNUDCeYG3jOl2BqRUfFQdK2_8uV016G8CBg&s"
+              src="https://www.freewebheaders.com/wp-content/gallery/2015-cars/bmw-4-gran-coupe-car-and-desert-landscape-web-header.jpg"
               class="d-block w-100"
               alt="..."
             />

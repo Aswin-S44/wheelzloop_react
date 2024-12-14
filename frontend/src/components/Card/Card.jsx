@@ -1,135 +1,86 @@
-import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { formattedDateTime } from "../../utils/time";
-import "./Card.css";
-import PlaceIcon from "@mui/icons-material/Place";
+import React from "react";
+import Loader from "../Loader/Loader";
+import EmptyState from "../EmptyState/EmptyState";
 
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme }) => ({
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-  variants: [
-    {
-      props: ({ expand }) => !expand,
-      style: {
-        transform: "rotate(0deg)",
-      },
-    },
-    {
-      props: ({ expand }) => !!expand,
-      style: {
-        transform: "rotate(180deg)",
-      },
-    },
-  ],
-}));
-
-export default function RecipeReviewCard({ carData }) {
-  const [expanded, setExpanded] = React.useState(false);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
+function Card({ loading, myCars }) {
   return (
-    <Card sx={{ maxWidth: 305,maxHeight:400 }}>
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title={carData.name ?? "_"}
-        subheader={`Posted on ${formattedDateTime(carData.createdAt)}`}
-      />
-      <CardMedia
-        component="img"
-        height="194"
-        image={carData?.images[0]}
-        alt="Paella dish"
-      />
-      <CardContent>
-        <h4 className="car-name">{carData?.name ?? "_"}</h4>
-        <div className="car-details">
-          <p className="variant">{carData?.varient}</p>
-          <p>Year: {carData?.model}</p>
-          <p>Kilometers: {carData?.kilometer.toLocaleString()}</p>
-          <p className="price">Price: ₹{carData?.price?.toLocaleString()}</p>
-          <p className="location">
-            <PlaceIcon /> {carData?.place}
-          </p>
-        </div>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography sx={{ marginBottom: 2 }}>Method:</Typography>
-          <Typography sx={{ marginBottom: 2 }}>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and
-            set aside for 10 minutes.
-          </Typography>
-          <Typography sx={{ marginBottom: 2 }}>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet
-            over medium-high heat. Add chicken, shrimp and chorizo, and cook,
-            stirring occasionally until lightly browned, 6 to 8 minutes.
-            Transfer shrimp to a large plate and set aside, leaving chicken and
-            chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes,
-            onion, salt and pepper, and cook, stirring often until thickened and
-            fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2
-            cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography sx={{ marginBottom: 2 }}>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is
-            absorbed, 15 to 18 minutes. Reduce heat to medium-low, add reserved
-            shrimp and mussels, tucking them down into the rice, and cook again
-            without stirring, until mussels have opened and rice is just tender,
-            5 to 7 minutes more. (Discard any mussels that don&apos;t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then
-            serve.
-          </Typography>
-        </CardContent>
-      </Collapse>
-    </Card>
+    <div>
+      <div className="cars-container">
+        {loading ? (
+          <Loader />
+        ) : myCars.length == 0 && !loading ? (
+          <>
+            <EmptyState />
+          </>
+        ) : (
+          myCars.map((car) => (
+            <div className="car-card" key={car._id}>
+              <div className="card-header">
+                <FaEllipsisV
+                  className="dots-icon"
+                  onClick={() => handleMenuClick(car._id)}
+                />
+                {activeDropdown === car._id && (
+                  <div
+                    className="dropdown-menu"
+                    ref={(el) => (dropdownRefs.current[car._id] = el)}
+                  >
+                    <button
+                      onClick={() => {
+                        handleOpen(car);
+                      }}
+                    >
+                      <VisibilityIcon
+                        sx={{
+                          fontSize: "19px",
+                          top: "-1px",
+                          position: "relative",
+                        }}
+                      />{" "}
+                      View
+                    </button>
+                    <button onClick={() => handleEdit(car)}>
+                      <EditIcon
+                        sx={{
+                          fontSize: "19px",
+                          top: "-1px",
+                          position: "relative",
+                        }}
+                      />{" "}
+                      Edit
+                    </button>
+                    <button onClick={() => handleRemove(car._id)}>
+                      <DeleteIcon
+                        sx={{
+                          fontSize: "19px",
+                          top: "-1px",
+                          position: "relative",
+                          color: "red",
+                        }}
+                      />{" "}
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+              <img src={car?.images[0]} alt={car.name} className="car-image" />
+              <div className="car-info">
+                <h2 className="car-name">{car.name}</h2>
+                <p>
+                  Posted on :{" "}
+                  {car.createdAt ? formattedDateTime(car.createdAt) : "_"}
+                </p>
+                <p className="car-details">
+                  {car.year} | {car.varient} | {car.kilometer} km
+                </p>
+                <p className="price">₹{car.rate.toLocaleString()}</p>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
   );
 }
+
+export default Card;

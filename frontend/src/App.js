@@ -11,13 +11,18 @@ import ProfileScreen from "./screens/ProfileScreen/ProfileScreen";
 import AddCar from "./screens/AddCar/AddCar";
 import ContactScreen from "./screens/ContactScreen/ContactScreen";
 import BlogsScreen from "./screens/BlogsScreen/BlogsScreen";
+import EditProfile from "./screens/EditProfile/EditProfile";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import DetailsScreen from "./screens/DetailsScreen/DetailsScreen";
+import FavouriteScreen from "./screens/FavouriteScreen/FavouriteScreen";
 
 function App() {
   return (
     <BrowserRouter>
-      <div>
+      <div className="app-container">
         <Header />
-        <main>
+        <main className="main-content">
           <Routes>
             <Route path="/" element={<HomeScreen />} />
             <Route path="/about-us" element={<AboutUs />} />
@@ -28,9 +33,13 @@ function App() {
             <Route path="/add-car" element={<AddCar />} />
             <Route path="/contact-us" element={<ContactScreen />} />
             <Route path="/blogs" element={<BlogsScreen />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/details/:id" element={<DetailsScreen />} />
+            <Route path="/cars/saved" element={<FavouriteScreen />} />
           </Routes>
         </main>
         <Footer />
+        <ToastContainer />
       </div>
     </BrowserRouter>
   );
