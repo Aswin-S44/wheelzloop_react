@@ -32,8 +32,15 @@ module.exports.getAllCars = async (req, res) => {
     if (kilometer) filters.kilometer = { $lte: Number(kilometer) };
     if (name) filters.name = { $regex: name, $options: "i" };
 
+    const sortOption = {};
+    if (sort.startsWith("-")) {
+      sortOption[sort.slice(1)] = -1;
+    } else {
+      sortOption[sort] = 1;
+    }
+
     const cars = await Cars.find(filters)
-      .sort(sort)
+      .sort(sortOption)
       .skip((page - 1) * limit)
       .limit(Number(limit));
 
