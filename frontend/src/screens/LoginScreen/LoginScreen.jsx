@@ -39,7 +39,7 @@ function LoginScreen() {
         },
         { withCredentials: true }
       );
-      console.log(data);
+
       const { success, message } = data;
       setLoading(false);
       if (success) {

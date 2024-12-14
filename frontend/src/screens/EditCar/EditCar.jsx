@@ -184,7 +184,7 @@ function EditCar({ car }) {
         return;
       }
     }
-    console.log(brand, kilometer, fuelType, priceNegotiable, insuranceValidity);
+
     if (step === 2) {
       if (!brand || !kilometer || !fuelType || !insuranceValidity) {
         Swal.fire("Please fill in all the fields in Step 2.");

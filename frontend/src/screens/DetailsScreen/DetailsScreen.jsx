@@ -109,9 +109,7 @@ const DetailsScreen = () => {
   };
 
   const validateForm = (name, number) => {
-    console.log("================");
     const isPhoneValid = /^[0-9]{10}$/.test(number);
-    console.log("isPhoneValid--------", isPhoneValid, number);
     setIsFormValid(name && isPhoneValid);
   };
   const [errors, setErrors] = useState({});
@@ -165,7 +163,7 @@ const DetailsScreen = () => {
       allow_whatsapp_notification: formData?.allowMessages,
       carId: id,
     };
-    console.log("data0bj : ", dataObj);
+
     // await sendEnquiry(dataObj);
     // toast.success("successful");
     // formData.fullName = "";
@@ -224,8 +222,7 @@ const DetailsScreen = () => {
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
-    console.log("value : ", value);
-    console.log("name : ", name);
+
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
@@ -234,7 +231,7 @@ const DetailsScreen = () => {
   const [formLoading, setFormLoading] = useState(false);
   React.useEffect(() => {
     const isValid = validateForms();
-    console.log("isvalid : ", isValid);
+
     setIsSubmitEnabled(isValid);
   }, [formData]);
 
@@ -360,7 +357,7 @@ const DetailsScreen = () => {
           />
           <ToastContainer />
         </div>
-        {console.log("car--------", car ? car : "no car")}
+
         <div className="container p-5 spec-details-box">
           <div className="spec-details p-4">
             <div className="row">
@@ -437,7 +434,7 @@ const DetailsScreen = () => {
           </div>
         </div>
       </div>
-      {console.log("selected car : ", selectedCar)}
+
       {selectedCar && (
         // <TransitionsModal
         //   car={selectedCar}

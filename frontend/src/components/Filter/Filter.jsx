@@ -222,7 +222,6 @@ function Filter({ onFilterChange }) {
                           value={name}
                           checked={nameSearch === name} // Update this to match the current state
                           onChange={() => {
-                            console.log("name clicked");
                             setNameSearch((prevName) =>
                               prevName === name ? "" : name
                             ); // Toggle the state
