@@ -25,6 +25,7 @@
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
+    "http": "^0.0.1-security",
     "nodemailer": "^6.9.16"
   }
 }

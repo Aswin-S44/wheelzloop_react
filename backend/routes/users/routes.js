@@ -8,6 +8,9 @@ const { editCar } = require("../../controllers/users/editCar");
 const { deleteCar } = require("../../controllers/users/deleteCar");
 const { editProfile } = require("../../controllers/users/editProfile");
 const { getSavedCars } = require("../../controllers/users/getSavedCars");
+const { generateCarData } = require("../../utils/generateRandom");
+const Cars = require("../../models/cars/schema");
+const { sendNotification } = require("../../utils/sendNotification");
 
 const router = express.Router();
 
@@ -23,5 +26,15 @@ router.post("/edit-car/:id", editCar);
 router.post("/delete-car/:id", deleteCar);
 router.post("/profile/edit", userVerification, editProfile);
 router.post("/cars/saved", getSavedCars);
+router.get("/generate/cars", async (req, res) => {
+  let cars = generateCarData();
+  let gCars = await Cars.create(cars);
+  res.send(gCars);
+});
+router.post('/notification/send',async(req,res)=>{
+  const {token,title,body} = req.body
+  const resp = await sendNotification(token,title,body)
+  res.send('Send notification api called')
+})
 
 module.exports = router;
