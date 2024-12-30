@@ -30,9 +30,8 @@ function FavouriteScreen() {
             savedIds: favCars,
           }
         );
-
+        setLoading(false);
         if (data && data.cars && data.cars.length > 0) {
-          setLoading(false);
           setSavedCars(data.cars);
         }
       } catch (error) {

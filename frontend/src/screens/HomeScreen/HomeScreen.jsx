@@ -45,9 +45,9 @@ function HomeScreen() {
         <section>
           <FeaturesSection />
         </section>
-        <section>
+        {/* <section>
           <Reviews />
-        </section>
+        </section> */}
         <section>
           <NewsAndResources />
         </section>

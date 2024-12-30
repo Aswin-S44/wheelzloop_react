@@ -83,9 +83,9 @@ function ReviewScreen() {
               </div>
             </div>
           </div>
-          <div className="customer-reviews  mt-5">
+          {/* <div className="customer-reviews  mt-5">
             <Reviews />
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
