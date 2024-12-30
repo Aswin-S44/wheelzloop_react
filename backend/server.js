@@ -15,9 +15,17 @@ const port = process.env.PORT || 5000;
 db.connect();
 
 // Middlewares
+// app.use(
+//   cors({
+//     origin: ["http://localhost:3001", "https://wheelzloop.com/"],
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
+
 app.use(
   cors({
-    origin: ["http://localhost:3001", "https://wheelzloop.com/"],
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
