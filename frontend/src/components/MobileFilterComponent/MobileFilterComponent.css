@@ -1,0 +1,64 @@
+.drawer-content {
+    padding: 16px;
+    background-color: #ffffff;
+  }
+  
+  .filter-title {
+    font-size: 19px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .filter-group {
+    margin-bottom: 16px;
+  }
+  
+  .filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  
+  .filter-select,
+  .range-slider {
+    width: 100%;
+  }
+  
+  
+  
+  .price-values {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .price-values span{
+    font-size: 15px;
+    font-weight: 500;
+  }
+  
+  .apply-button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 16px;
+    font-size: 1.1em;
+    background-color: #21cb98;
+    border: none;
+    color: #fff;
+    font-weight: 500;
+  }
+
+.filter-button{
+  
+    padding: 4px;
+    color: #fff;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 1px solid #21cb98;
+    margin-bottom: 10px;
+    background-color: #21cb98;
+    font-weight: 500;
+}
+
+

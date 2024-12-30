@@ -1,0 +1,52 @@
+.multi-step{
+    font-size: 18px;
+    font-family: 'Inter';
+    line-height: 100px;
+    font-weight: 600;
+}
+
+.multi-steps{
+    border-right: 2px solid rgb(222, 49, 99);
+}
+
+.completed{
+    color: rgb(24, 179, 24);
+}
+
+.add-car-form{
+    line-height: 40px;
+}
+.next-btn{
+    background-color: rgb(207, 42, 111);
+    width: 100px;
+    border: 1px solid #ffff;
+    outline: none;
+    color: #ffff;
+}
+
+.prev-btn{
+    background-color: rgb(255, 252, 253);
+    width: 100px;
+    border: 1px solid #111;
+    outline: none;
+    color: #111;
+    left: -10px;
+    position: relative;
+}
+
+.additional-image{
+    width: 150px;
+    height: auto;
+}
+
+@media only screen and (max-width: 600px) {
+    .multi-steps{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        margin-top: 10px;
+    }
+    .next-btn{
+        margin-bottom: 40px;
+    }
+  }

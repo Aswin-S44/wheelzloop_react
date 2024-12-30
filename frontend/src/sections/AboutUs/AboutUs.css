@@ -1,0 +1,19 @@
+.about-section span {
+    color: #DE3163;
+    font-weight: bold;
+}
+
+p {
+    font-family: 'Inter';
+}
+
+@media (max-width: 768px) {
+    .about-page {
+        margin-top: 10px;
+        padding: 15px;
+        margin-bottom: 50px;
+    }
+    .about-im{
+        margin-top: 20px;
+    }
+}
