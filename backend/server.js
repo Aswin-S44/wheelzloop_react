@@ -17,7 +17,7 @@ db.connect();
 // Middlewares
 app.use(
   cors({
-    origin: ["http://localhost:3001"],
+    origin: ["http://localhost:3001", "https://wheelzloop.com/"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
