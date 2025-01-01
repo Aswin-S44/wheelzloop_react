@@ -4,12 +4,13 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import "./LoginScreen.css";
 import axios from "axios";
-import { BACKEND_URL } from "../../constants/urls";
 import Swal from "sweetalert2";
+import { login } from "../../services/apis";
 
 function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const initialValues = {
@@ -32,30 +33,26 @@ function LoginScreen() {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const { data } = await axios.post(
-        `${BACKEND_URL}/api/v1/user/login`,
-        {
-          values,
-        },
-        { withCredentials: true }
-      );
-
-      const { success, message } = data;
+      setError(null);
+      const response = await login(values);
       setLoading(false);
-      if (success) {
+
+      if (response.success) {
+        localStorage.setItem("user", JSON.stringify(response.user));
+
         Swal.fire({
           title: "Good job!",
-          text: "Successfully loggedIn",
+          text: "Successfully logged in",
           icon: "success",
         });
         setTimeout(() => {
           navigate("/");
         }, 1000);
       } else {
-        // handleError(message);
+        setError(response.message || "Something went wrong");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setLoading(false);
     }
   };
@@ -69,6 +66,21 @@ function LoginScreen() {
       )}
       <div className="login-container">
         <div className="login-card">
+          {error && (
+            <div
+              style={{
+                backgroundColor: "#ffa8a5",
+                display: "flex",
+                justifyContent: "center",
+                padding: "20px",
+                borderRadius: "10px",
+                color: "#222",
+                marginBottom: "10px",
+              }}
+            >
+              {error}
+            </div>
+          )}
           <h1 className="login-title">Login</h1>
           <Formik
             initialValues={initialValues}

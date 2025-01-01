@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-
+import PaymentsIcon from "@mui/icons-material/Payments";
+import DriveEtaIcon from "@mui/icons-material/DriveEta";
 import Modal from "@mui/material/Modal";
+import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
+import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
+import PersonPinCircleIcon from "@mui/icons-material/PersonPinCircle";
+import NoteIcon from "@mui/icons-material/Note";
+import TypeSpecimenIcon from "@mui/icons-material/TypeSpecimen";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import {
   FaCar,
   FaDollarSign,
@@ -15,6 +23,7 @@ import {
   FaExclamationTriangle,
   FaStore,
   FaHandHoldingUsd,
+  FaSpinner,
 } from "react-icons/fa";
 import "./DetailsScreen.css";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -46,6 +55,8 @@ import {
 import SpringModal from "../../components/SpringModal/SpringModal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { getCarDetails } from "../../services/apis";
+import Loader from "../../components/Loader/Loader";
 
 const style = {
   position: "absolute",
@@ -118,7 +129,7 @@ const DetailsScreen = () => {
     const fetchDetails = async () => {
       try {
         setLoading(true);
-        let res = await axios.get(`${BACKEND_URL}/api/v1/customer/car/${id}`);
+        const res = await getCarDetails(id);
 
         let favCars = JSON.parse(localStorage.getItem("fav-cars")) || [];
         if (favCars && favCars.length > 0) {
@@ -128,7 +139,7 @@ const DetailsScreen = () => {
         }
         setLoading(false);
         if (res) {
-          setCar(res.data);
+          setCar(res);
           setBrand(res?.brand);
           setFilters((prevFilters) => ({
             model: res?.brand,
@@ -259,202 +270,340 @@ const DetailsScreen = () => {
           <div className="message">Please Wait...</div>
         </div>
       )}
+
       <div className="mt-0">
-        <div className="details-screen p-5">
-          <div className="image-section">
-            <img
-              src={car?.image || car?.images[0]}
-              alt={car?.car_name}
-              className="w-100 main-image"
-            />
-            <div className="additional-images">
-              {car &&
-                car.additional_images &&
-                car.additional_images.length > 0 &&
-                car.additional_images.map((img, index) => (
-                  <>
-                    <img
-                      key={index}
-                      src={img}
-                      alt={`Additional ${index + 1}`}
-                      className="additional-image"
-                      onClick={() => handleOpenCarImage(car)}
-                    />
-                  </>
-                ))}
+        {loading ? (
+          <div className="details-screen">
+            <Loader className="w-100" />
+          </div>
+        ) : (
+          <>
+            <div className="details-screen p-5 mt-4">
+              <div className="image-section">
+                <img
+                  src={car?.image || car?.images[0]}
+                  alt={car?.car_name}
+                  className="w-100 main-image"
+                  onClick={() =>
+                    handleOpenCarImage(car?.image || car?.images[0])
+                  }
+                />
+                <div className="additional-images">
+                  {car &&
+                    car.additional_images &&
+                    car.additional_images.length > 0 &&
+                    car.additional_images.map((img, index) => (
+                      <>
+                        <img
+                          key={index}
+                          src={img}
+                          alt={`Additional ${index + 1}`}
+                          className="additional-image"
+                          onClick={() => handleOpenCarImage(car)}
+                        />
+                      </>
+                    ))}
 
-              {car?.images &&
-                car.images.length > 0 &&
-                car.images.map((img, index) => (
-                  <img
-                    key={index}
-                    src={img}
-                    alt={`Additional ${index + 1}`}
-                    className="additional-image"
-                    onClick={() => handleOpenCarImage(car.images[index])}
+                  {car?.images &&
+                    car.images.length > 0 &&
+                    car.images.map((img, index) => (
+                      <img
+                        key={index}
+                        src={img}
+                        alt={`Additional ${index + 1}`}
+                        className="additional-image"
+                        onClick={() => handleOpenCarImage(car.images[index])}
+                      />
+                    ))}
+                </div>
+              </div>
+              <div className="details-section2 mt-0">
+                <h6>
+                  Posted On :{" "}
+                  {car?.createdAt ? formattedDateTime(car.createdAt) : "_"}
+                </h6>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <h2 className="car-name">
+                    {car?.name} - {car?.brand}
+                  </h2>
+                  <FavoriteIcon
+                    onClick={() => addToFav()}
+                    style={{
+                      top: "10px",
+                      position: "relative",
+                      color: isFavourite ? "red" : "black",
+                    }}
                   />
-                ))}
-            </div>
-          </div>
-          <div className="details-section mt-0">
-            <h6>
-              Posted On -{" "}
-              {car?.createdAt
-                ? formattedDateTime(car.createdAt)
-                : "Unavailable"}
-            </h6>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <h2 className="car-name">
-                {car?.name} - {car?.brand}
-              </h2>
-              <FavoriteIcon
-                onClick={() => addToFav()}
-                style={{
-                  top: "10px",
-                  position: "relative",
-                  color: isFavourite ? "red" : "black",
-                }}
+                </div>
+                <div>
+                  {car?.sold ? (
+                    <h4 style={{ fontSize: "16px", color: "red" }}>
+                      Unavailable
+                    </h4>
+                  ) : (
+                    <h4 style={{ fontSize: "16px", color: "green" }}>
+                      Available
+                    </h4>
+                  )}
+                </div>
+                <div>
+                  <h4>
+                    <CurrencyRupeeIcon /> {car?.rate ?? "Unavailable"}
+                  </h4>
+                </div>
+                <div className="imp-specs mt-2">
+                  {car?.fuelType || ""} | {car?.transmission ?? ""} |{" "}
+                  {car?.kilometer ?? ""} Km
+                </div>
+                <div className="mt-2">
+                  <PlaceIcon /> {car?.location ?? ""}
+                </div>
+                <p>{car?.about}</p>
+                {!car?.sold ? (
+                  // <button
+                  //   className="inquiry-button p-3 mt-2"
+                  //   // onClick={handleOpen}
+                  //   onClick={handleOpenModal}
+                  // >
+                  //   Get Seller Details
+                  // </button>
+                  <button
+                    className="inquiry-button p-3 mt-2"
+                    // onClick={handleOpen}
+                    onClick={() => {
+                      window.location.href = `/seller/profile/${car.userId}`;
+                    }}
+                  >
+                    Get Seller Details
+                  </button>
+                ) : (
+                  <button className="btn btn-secondary" disabled>
+                    Unavailable
+                  </button>
+                )}
+              </div>
+              <SpringModal
+                open={open}
+                handleClose={handleClose}
+                onSubmit={handleSubmit}
               />
+              <ToastContainer />
             </div>
-            <div>
-              {car?.sold ? (
-                <h4 style={{ fontSize: "16px", color: "red" }}>Unavailable</h4>
-              ) : (
-                <h4 style={{ fontSize: "16px", color: "green" }}>Available</h4>
-              )}
-            </div>
-            <div>
-              <h4>
-                <CurrencyRupeeIcon /> {car?.rate ?? "Unavailable"}
-              </h4>
-            </div>
-            <div className="imp-specs mt-2">
-              {car?.fuelType || ""} | {car?.transmission ?? ""} |{" "}
-              {car?.kilometer ?? ""} Km
-            </div>
-            <div className="mt-2">
-              <PlaceIcon /> {car?.place ?? ""}
-            </div>
-            <p>{car?.about}</p>
-            {!car?.sold ? (
-              <button
-                className="inquiry-button p-3 mt-2"
-                // onClick={handleOpen}
-                onClick={handleOpenModal}
-              >
-                Get Seller Detailsdsds
-              </button>
-            ) : (
-              <button className="btn btn-secondary" disabled>
-                Unavailable
-              </button>
-            )}
-          </div>
-          <SpringModal
-            open={open}
-            handleClose={handleClose}
-            onSubmit={handleSubmit}
-          />
-          <ToastContainer />
-        </div>
 
-        <div className="container p-5 spec-details-box">
-          <div className="spec-details p-4">
-            <div className="row">
-              <div className="col-md-3">
-                {" "}
-                <div className="spec-item">
-                  <div className="icon">
-                    <FaTools
-                      style={{ fontSize: "24px" }}
-                      className="spec-icon"
-                    />
-                  </div>
-                  <div className="spec-text">
-                    <span className="spec-title">Mileage</span>{" "}
-                    {car?.mileage || "Unavailable"} Km
-                  </div>
-                </div>
-              </div>
+            <div className="container p-5">
+              <div className="spec-details-box">
+                <h4>Specifications</h4>
+                <div className="spec-details p-4">
+                  <div className="row">
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <FaTools
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Mileage</span>{" "}
+                          {car?.mileage || "Unavailable"} Km
+                        </div>
+                      </div>
+                    </div>
 
-              <div className="col-md-3">
-                {" "}
-                <div className="spec-item">
-                  <div className="icon">
-                    <PeopleIcon
-                      style={{ fontSize: "24px" }}
-                      className="spec-icon"
-                    />
-                  </div>
-                  <div className="spec-text">
-                    <span className="spec-title">Ownership</span>{" "}
-                    {car?.ownership || "Unavailable"}{" "}
-                    {car?.ownership == 1
-                      ? "st"
-                      : car?.ownership == 2
-                      ? "nd"
-                      : car?.ownership == 3
-                      ? "rd"
-                      : "th"}
-                  </div>
-                </div>
-              </div>
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <PeopleIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Ownership</span>{" "}
+                          {car?.ownership || "Unavailable"}{" "}
+                          {car?.ownership == 1
+                            ? "st"
+                            : car?.ownership == 2
+                            ? "nd"
+                            : car?.ownership == 3
+                            ? "rd"
+                            : "th"}
+                        </div>
+                      </div>
+                    </div>
 
-              <div className="col-md-3">
-                {" "}
-                <div className="spec-item">
-                  <div className="icon">
-                    <AirlineSeatReclineNormalIcon
-                      style={{ fontSize: "24px" }}
-                      className="spec-icon"
-                    />
-                  </div>
-                  <div className="spec-text">
-                    <span className="spec-title">Seats</span>{" "}
-                    {car?.totalSeats || "Unavailable"}{" "}
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-3">
-                {" "}
-                <div className="spec-item">
-                  <div className="icon">
-                    <AirlineSeatReclineNormalIcon
-                      style={{ fontSize: "24px" }}
-                      className="spec-icon"
-                    />
-                  </div>
-                  <div className="spec-text">
-                    <span className="spec-title">Rate Negotiable</span>{" "}
-                    {car?.priceNegotiable ? "Yes" : "No" || "Unavailable"}{" "}
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <AirlineSeatReclineNormalIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Seats</span>{" "}
+                          {car?.totalSeats || "Unavailable"}{" "}
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <PaymentsIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Rate Negotiable</span>{" "}
+                          {car?.priceNegotiable ? "Yes" : "No" || "Unavailable"}{" "}
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <DriveEtaIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Body Type</span>{" "}
+                          {car?.bodyType ? car.bodyType : "_"}{" "}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <SettingsSuggestIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Transmission Type</span>{" "}
+                          {car?.transmission ? car.transmission : "_"}{" "}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <LocalGasStationIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Fuel Type</span>{" "}
+                          {car?.fuelType ? car.fuelType : "_"}{" "}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <PersonPinCircleIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">RTO</span>{" "}
+                          {car?.rto ? car.rto : "_"}{" "}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <NoteIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Under Warrenty</span>{" "}
+                          {car?.underWarrenty ? "Yes" : "No"}{" "}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <TypeSpecimenIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Varient</span>{" "}
+                          {car?.varient ?? "_"}{" "}
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <CalendarTodayIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">Modal (Year)</span>{" "}
+                          {car?.year ?? "_"}{" "}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      {" "}
+                      <div className="spec-item">
+                        <div className="icon">
+                          <CalendarMonthIcon
+                            style={{ fontSize: "24px" }}
+                            className="spec-icon"
+                          />
+                        </div>
+                        <div className="spec-text">
+                          <span className="spec-title">
+                            Insurance Validity Till
+                          </span>{" "}
+                          {car?.insuranceValidity ?? "_"}{" "}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
       {selectedCar && (
-        // <TransitionsModal
-        //   car={selectedCar}
-        //   open={openCarImage}
-        //   handleClose={handleCloseCarImage}
-        // />
         <Dialog open={openCarImage} onClose={handleCloseCarImage}>
-          <div className="row">
-            <DialogTitle>Image Preview</DialogTitle>
-            {/* <DialogActions>
-              <Button
-                style={{ float: "right" }}
-                onClick={handleCloseCarImage}
-                color="primary"
-              >
-                <CloseIcon style={{ color: "#111" }} />
-              </Button>
-            </DialogActions> */}
-          </div>
-
           <DialogContent>
             <img
               src={selectedCar}
@@ -470,7 +619,13 @@ const DetailsScreen = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box
+          // sx={style}
+          sx={{
+            ...style,
+            width: { xs: "90%", sm: "70%", md: "50%" },
+          }}
+        >
           <Typography
             id="spring-modal-title"
             variant="h5"

@@ -11,6 +11,7 @@ const { getSavedCars } = require("../../controllers/users/getSavedCars");
 const { generateCarData } = require("../../utils/generateRandom");
 const Cars = require("../../models/cars/schema");
 const { sendNotification } = require("../../utils/sendNotification");
+const { uploadImage } = require("../../utils/uploadImage");
 
 const router = express.Router();
 
@@ -31,10 +32,12 @@ router.get("/generate/cars", async (req, res) => {
   let gCars = await Cars.create(cars);
   res.send(gCars);
 });
-router.post('/notification/send',async(req,res)=>{
-  const {token,title,body} = req.body
-  const resp = await sendNotification(token,title,body)
-  res.send('Send notification api called')
-})
+router.post("/notification/send", async (req, res) => {
+  const { token, title, body } = req.body;
+  const resp = await sendNotification(token, title, body);
+  res.send("Send notification api called");
+});
+
+router.post("/image/upload", uploadImage);
 
 module.exports = router;

@@ -113,13 +113,6 @@ function ProfileScreen() {
     }
   };
 
-  // useEffect(() => {
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [activeDropdown]);
-
   const [savedCarLoading, setSavedCarsLoading] = useState(false);
   const getSavedCars = async () => {
     try {

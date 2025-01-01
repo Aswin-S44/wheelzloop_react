@@ -17,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import DetailsScreen from "./screens/DetailsScreen/DetailsScreen";
 import FavouriteScreen from "./screens/FavouriteScreen/FavouriteScreen";
 import RegisterScreen from "./screens/RegisterScreen/RegisterScreen";
+import DealerProfileScreen from "./screens/DealerProfileScreen/DealerProfileScreen";
 
 function App() {
   return (
@@ -38,6 +39,10 @@ function App() {
             <Route path="/details/:id" element={<DetailsScreen />} />
             <Route path="/cars/saved" element={<FavouriteScreen />} />
             <Route path="/register" element={<RegisterScreen />} />
+            <Route
+              path="/seller/profile/:id"
+              element={<DealerProfileScreen />}
+            />
           </Routes>
         </main>
         <Footer />

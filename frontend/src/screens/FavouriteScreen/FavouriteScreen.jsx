@@ -5,6 +5,7 @@ import { BACKEND_URL } from "../../constants/urls";
 import EmptyState from "../../components/EmptyState/EmptyState";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Loader from "../../components/Loader/Loader";
+import { getCarsByIds } from "../../services/apis";
 
 function FavouriteScreen() {
   const [savedCars, setSavedCars] = useState([]);
@@ -24,16 +25,20 @@ function FavouriteScreen() {
       try {
         setLoading(true);
         let favCars = JSON.parse(localStorage.getItem("fav-cars")) || [];
-        let { data } = await axios.post(
-          `${BACKEND_URL}/api/v1/user/cars/saved`,
-          {
-            savedIds: favCars,
-          }
-        );
+        const res = await getCarsByIds(favCars);
+        console.log("FAV CARS==========", res ? res : "no res");
         setLoading(false);
-        if (data && data.cars && data.cars.length > 0) {
-          setSavedCars(data.cars);
-        }
+        // let { data } = await axios.post(
+        //   `${BACKEND_URL}/api/v1/user/cars/saved`,
+        //   {
+        //     savedIds: favCars,
+        //   }
+        // );
+        // setLoading(false);
+        // if (data && data.cars && data.cars.length > 0) {
+        //   setSavedCars(data.cars);
+        // }
+        setSavedCars(res);
       } catch (error) {
         console.log("Error while fetching saved cars : ", error);
         setLoading(false);
@@ -90,7 +95,7 @@ function FavouriteScreen() {
 
                       <td>
                         <button
-                          onClick={() => removeFromFavorites(car._id)}
+                          onClick={() => removeFromFavorites(car.id)}
                           style={{
                             border: "none",
                             outline: "none",

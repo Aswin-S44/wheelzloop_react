@@ -6,6 +6,8 @@ import axios from "axios";
 import { BACKEND_URL } from "../../constants/urls";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { addCar } from "../../services/apis";
+import useAuth from "../../hooks/useAuth";
 const vehicleBodyTypes = [
   "Sedan",
   "Hatchback",
@@ -36,6 +38,7 @@ function AddCar() {
   const [mileage, setMileage] = useState(0);
   const [underWarrenty, setUnderWarrenty] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { email } = useAuth();
 
   const resetForm = () => {
     setAdditionalImages([]);
@@ -101,6 +104,7 @@ function AddCar() {
       rto,
       mileage,
       underWarrenty,
+      userId: email,
     };
     if (images.length === 0) {
       Swal.fire({
@@ -124,9 +128,10 @@ function AddCar() {
       }).then(async (result) => {
         if (result.isConfirmed) {
           setLoading(true);
-          await axios.post(`${BACKEND_URL}/api/v1/user/add-car`, carData, {
-            withCredentials: true,
-          });
+         
+          let resp = await addCar(carData);
+          
+
           setLoading(false);
           Swal.fire("Saved!", "", "success");
           resetForm();
@@ -421,7 +426,7 @@ function AddCar() {
                       <button
                         type="submit"
                         className="next-btn w-200 mt-3 ms-auto"
-                        disabled={loading}
+                        // disabled={loading}
                       >
                         {loading ? <>Please Wait....</> : <>Submit</>}
                       </button>

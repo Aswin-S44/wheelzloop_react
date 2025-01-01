@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
-import { BACKEND_URL } from "../../constants/urls";
 import axios from "axios";
+import { signUp } from "../../services/apis";
 
 function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -40,22 +40,22 @@ function RegisterScreen() {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const { data } = await axios.post(
-        `${BACKEND_URL}/api/v1/user/register`,
-        values
-      );
+      setError(null);
+      const response = await signUp(values);
       setLoading(false);
-      if (data.success) {
+
+      if (response.success) {
         Swal.fire({
           title: "Good job!",
           text: "Successfully Created Account",
           icon: "success",
         });
         setTimeout(() => {
-          navigate("/");
+          navigate("/login");
         }, 1000);
       } else {
-        setError(data.message || "Something went wrong");
+        setLoading(false);
+        setError(response.message || "Something went wrong");
       }
     } catch (err) {
       console.error(err);
@@ -73,6 +73,21 @@ function RegisterScreen() {
         )}
         <div className="login-container">
           <div className="login-card">
+            {error && (
+              <div
+                style={{
+                  backgroundColor: "#ffa8a5",
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "20px",
+                  borderRadius: "10px",
+                  color: "#222",
+                  marginBottom: "10px",
+                }}
+              >
+                {error}
+              </div>
+            )}
             <h1 className="login-title">Register</h1>
             <Formik
               initialValues={initialValues}

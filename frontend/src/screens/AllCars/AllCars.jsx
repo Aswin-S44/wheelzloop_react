@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./AllCars.css";
 import Filter from "../../components/Filter/Filter";
 import useMobileView from "../../hooks";
 import MobileFilterComponent from "../../components/MobileFilterComponent/MobileFilterComponent";
-import { carData } from "../../constants/data";
+import { dummyCarData } from "../../constants/data";
 import NotFound from "../NotFound/NotFound";
 import CarCard from "../../components/CarCard/CarCard";
 import Carousel from "../../components/Carousel/Carousel";
 import axios from "axios";
-import { BACKEND_URL } from "../../constants/urls";
 import { useNavigate } from "react-router-dom";
 import PlaceIcon from "@mui/icons-material/Place";
 import Loader from "../../components/Loader/Loader";
@@ -17,17 +16,23 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import SearchIcon from "@mui/icons-material/Search";
+import { addDummyCars, getAllCars } from "../../services/apis";
 
 function AllCars() {
   const isMobile = useMobileView();
-  const [cars, setCars] = useState(carData);
+  const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({});
   const [search, setSearch] = useState("");
   const [filteredCars, setFilteredCars] = useState([]);
   const [sort, setSort] = useState("createdAt");
   const [isFavourite, setIsFavourite] = useState(false);
-
+  const [hasMore, setHasMore] = useState(true);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    sort: "createdAt",
+  });
   const [favCars, setFavCars] = useState([]);
 
   const fetchFavCars = () => {
@@ -74,30 +79,54 @@ function AllCars() {
     }
   };
 
+  const observer = useRef();
+
   useEffect(() => {
     const fetchCars = async () => {
+      if (loading || !hasMore) return;
+
       try {
         setLoading(true);
-        const { data } = await axios.get(
-          `${BACKEND_URL}/api/v1/customer/cars/all`,
-          {
-            params: { ...filters, sort },
-          }
-        );
+        const carsData = await getAllCars(filters, pagination);
 
-        if (data && data.cars) {
-          setLoading(false);
-          setCars(data.cars);
+        setCars((prevCars) => {
+          const newCars = carsData.filter(
+            (car) => !prevCars.some((prevCar) => prevCar.id === car.id)
+          );
+          return [...prevCars, ...newCars];
+        });
+
+        if (carsData.length < pagination.limit) {
+          setHasMore(false);
         }
       } catch (error) {
+        console.log("Error while fetching cars: ", error);
+      } finally {
         setLoading(false);
-        console.log("Error while fetching cars : ", error);
       }
     };
 
     fetchCars();
-    fetchFavCars();
-  }, [filters, search, sort]);
+  }, [filters, pagination]);
+
+  const lastCarRef = (node) => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPagination((prev) => ({ ...prev, page: prev.page + 1 }));
+      }
+    });
+
+    if (node) observer.current.observe(node);
+  };
+
+  const handleAddDummyData = async () => {
+    console.log("Started!!!!");
+    await addDummyCars();
+    console.log("Finished!!!!");
+  };
 
   return (
     <section>
@@ -120,6 +149,7 @@ function AllCars() {
             </div>
           </div>
           <div className="col-md-8">
+            {/* <button onClick={handleAddDummyData}>save</button> */}
             <div className="search-container w-100">
               <input
                 type="text"
@@ -138,7 +168,7 @@ function AllCars() {
                   <div
                     key={index}
                     className="search-result-item"
-                    onClick={() => navigate(`/details/${car._id}`)}
+                    onClick={() => navigate(`/details/${car.id}`)}
                   >
                     <p>
                       {car.name} - {car.varient} ({car.brand})
@@ -162,7 +192,7 @@ function AllCars() {
               </select>
             </div>
             <div className="car-list mt-3">
-              {cars.length === 0 && !loading ? (
+              {!loading && cars.length === 0 ? (
                 <div
                   className="w-100"
                   style={{ display: "flex", justifyContent: "center" }}
@@ -170,32 +200,34 @@ function AllCars() {
                   <NotFound />
                 </div>
               ) : loading ? (
-                <>
-                  <Loader />
-                </>
+                <Loader />
               ) : (
                 cars.map((car, index) => (
-                  <div key={index} className="car-card-2 m-2">
-                    {favCars.includes(car._id) ? (
+                  <div
+                    key={index}
+                    className="car-card-2 m-2"
+                    ref={cars.length === index + 1 ? lastCarRef : null}
+                  >
+                    {favCars.includes(car.id) ? (
                       <FavoriteIcon
                         style={{ color: "red" }}
-                        onClick={() => addToFav(car._id)}
+                        onClick={() => addToFav(car.id)}
                       />
                     ) : (
-                      <FavoriteBorderIcon onClick={() => addToFav(car._id)} />
+                      <FavoriteBorderIcon onClick={() => addToFav(car.id)} />
                     )}
                     {car && car.images && car.images.length > 0 && (
                       <img
                         src={car.images[0]}
                         alt={car.car_name}
                         className="car-image-2"
-                        onClick={() => navigate(`/details/${car?._id}`)}
+                        onClick={() => navigate(`/details/${car?.id}`)}
                       />
                     )}
 
                     <div
                       className="car-details"
-                      onClick={() => navigate(`/details/${car?._id}`)}
+                      onClick={() => navigate(`/details/${car?.id}`)}
                     >
                       <h5>
                         {car.name} - {car.varient}
@@ -207,7 +239,7 @@ function AllCars() {
                         Price: ₹{car?.rate?.toLocaleString()}
                       </p>
                       <p className="location">
-                        <PlaceIcon /> {car.place}
+                        <PlaceIcon /> {car.location ?? "_"}
                       </p>
                     </div>
                   </div>

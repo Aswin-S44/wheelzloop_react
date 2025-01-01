@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { BACKEND_URL } from "../constants/urls";
 
 const useAuth = () => {
   const navigate = useNavigate();
@@ -11,40 +10,25 @@ const useAuth = () => {
   const [username, setUsername] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [email,setEmail] = useState(null)
 
   useEffect(() => {
-    const verifyCookie = async () => {
-      if (!cookies.token) {
-        setIsLoggedIn(false);
-      }
-      const { data } = await axios.post(
-        BACKEND_URL,
-        {},
-        { withCredentials: true }
-      );
-
-      const { status, user, me } = data;
-      // setUsername(user);
-      // setIsLoggedIn(true);
-      // setCurrentUser(me);
-      if (status) {
-        setUsername(user);
-        setIsLoggedIn(true);
-        setCurrentUser(me);
-      } else {
-        removeCookie("token");
-        // navigate("/login");
-      }
-    };
-    verifyCookie();
-  }, [cookies, navigate, removeCookie]);
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUsername(user.firstName);
+      setIsLoggedIn(true);
+      setCurrentUser(user);
+      setEmail(user.email)
+    }
+  }, [navigate]);
 
   const logout = () => {
     removeCookie("token");
+    localStorage.removeItem("user");
     navigate("/");
   };
 
-  return { username, logout, isLoggedIn, currentUser };
+  return { username, logout, isLoggedIn, currentUser,email };
 };
 
 export default useAuth;
